@@ -33,24 +33,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (USE_SUPABASE && supabase) {
-      // Load whatever session already exists (e.g. after a page refresh)...
-      supabase.auth.getSession().then(async ({ data: { session } }) => {
-        if (session?.user) {
-          const profile = await fetchSupabaseProfile(session.user.id)
-          setUser(profile)
-        }
-        setLoading(false)
-      })
-
-      // ...then keep listening for sign-in/sign-out/token-refresh events.
-      const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      // supabase-js fires onAuthStateChange once immediately with the
+      // current session on subscribe (event: 'INITIAL_SESSION'), then again
+      // on every future sign-in/out/token-refresh. A separate getSession()
+      // call here used to run in parallel with this same listener — both
+      // independently fetched the profile and called setUser(), racing each
+      // other. If the second one lost the race (e.g. a transient RLS/JWT
+      // timing hiccup returned no row), it would silently overwrite a
+      // correct "isAdmin: true" with a stale/fallback "isAdmin: false" —
+      // which is exactly the "admin menu disappears after reload" bug.
+      // Using this single listener as the only source of truth removes that
+      // race entirely.
+      const { data: sub } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (session?.user) {
           let profile = await fetchSupabaseProfile(session.user.id)
-          if (!profile) {
-            // First time we've seen this auth user (e.g. just completed Google
-            // OAuth) — there's no public.users row yet, so create one now
-            // using whatever Google gave us (name/avatar), same as email
-            // sign-up does.
+          if (!profile && event === 'SIGNED_IN') {
+            // Only treat "no profile row yet" as "brand new OAuth user" on an
+            // actual fresh sign-in event — never on INITIAL_SESSION/TOKEN_REFRESHED,
+            // where a null result is far more likely to be a transient fetch
+            // hiccup than a genuinely new account, and blindly creating a
+            // fallback profile there is what caused the admin-flag regression.
             const meta = session.user.user_metadata ?? {}
             profile = {
               uid: session.user.id,
@@ -67,12 +69,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               isAdmin: false,
               role: 'user'
             }
-            await createSupabaseProfile(profile)
+            try {
+              await createSupabaseProfile(profile)
+            } catch {
+              // Row already exists (e.g. race with another tab/request) — 
+              // re-fetch the real one instead of trusting our fallback.
+              profile = await fetchSupabaseProfile(session.user.id)
+            }
           }
-          setUser(profile)
+          if (profile) setUser(profile)
         } else {
           setUser(null)
         }
+        setLoading(false)
       })
 
       return () => sub.subscription.unsubscribe()
