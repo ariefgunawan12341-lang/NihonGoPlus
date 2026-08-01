@@ -63,12 +63,12 @@ export function RichTextEditor({ value, onChange }: { value: string; onChange: (
 
   function insertLink() {
     const url = window.prompt('URL tautan:')
-    if (url) editor.chain().focus().setLink({ href: url }).run()
+    if (url) editor?.chain().focus().setLink({ href: url }).run()
   }
 
   function insertYoutube() {
     const url = window.prompt('URL video YouTube:')
-    if (url) editor.commands.setYoutubeVideo({ src: url })
+    if (url) editor?.commands.setYoutubeVideo({ src: url })
   }
 
   return (
