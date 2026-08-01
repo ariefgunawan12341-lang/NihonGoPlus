@@ -119,7 +119,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         lastStudyDate: null,
         isPremium: false,
         isAdmin: false,
-        role: 'user'
+        role: 'user',
+        language: 'en',
+        bio: '',
+        country: '',
+        targetLevel: 'N5'
       }
       await createSupabaseProfile(profile)
       setUser(profile)

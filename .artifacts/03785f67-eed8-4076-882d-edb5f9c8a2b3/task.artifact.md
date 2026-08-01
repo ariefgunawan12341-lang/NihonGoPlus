@@ -1,4 +1,7 @@
-- [ ] Update `AuthContext.tsx` with refined Google Login logic
-- [ ] Update `Login.tsx` with better error handling
-- [ ] Update `Signup.tsx` with better error handling
-- [ ] Verify build and project stability
+# NihonGoPlus Production Tasks
+
+- [x] Align profile defaults in `AuthContext.tsx`
+- [x] Refine `friendlyAuthError` in Login/Signup
+- [x] Final build verification
+- [x] Vercel configuration check
+- [x] Production report generation

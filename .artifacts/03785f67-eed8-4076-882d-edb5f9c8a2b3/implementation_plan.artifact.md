@@ -1,41 +1,39 @@
-# Implementation Plan - Configure Google Login (Supabase)
+# Implementation Plan - NihonGoPlus Production Polish
 
-This plan outlines the steps to correctly configure and implement Google Sign-In for **NihonGoPlus** using Supabase Auth.
+This plan addresses final production hurdles for NihonGoPlus, focusing on Authentication robustness, successful build, and Vercel deployment.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Manual Steps Required**: You will need to perform some actions in the **Google Cloud Console** and **Supabase Dashboard** that I cannot do for you (e.g., creating OAuth credentials). I have provided a complete guide below.
+> **Manual Steps Required**: You will need to manually configure the Google OAuth Client ID and Secret in your Supabase Dashboard as per the `GOOGLE_AUTH_SETUP.md` guide.
+> **Environment Variables**: Ensure all variables from `.env.example` are added to your Vercel project settings.
 
 ## Proposed Changes
 
-### 1. Project Configuration
-#### [MODIFY] [.env.example](file:///E:/NIHONGOPLUS UPDATE TERBARU/.env.example)
-- Ensure all required Supabase variables are listed.
+### 1. Authentication & Profile Logic
+- [MODIFY] `src/contexts/AuthContext.tsx`:
+    - Align default profile fields in both `signUp` and `onAuthStateChange` (Google Login) paths.
+    - Ensure new users always have `bio`, `country`, and `targetLevel` initialized to avoid UI issues.
+    - Robustify the redirect logic for Google OAuth to support both localhost and production.
 
-### 2. Authentication Logic
-#### [MODIFY] [AuthContext.tsx](file:///E:/NIHONGOPLUS UPDATE TERBARU/src/contexts/AuthContext.tsx)
-- Refine `signInWithGoogle` to use the correct `redirectTo` parameter for local vs. production.
-- Improve the `onAuthStateChange` listener to robustly handle the "new user" profile creation from Google metadata (saving `full_name`, `avatar_url`, and setting default roles).
+### 2. Error Handling Polish
+- [MODIFY] `src/pages/Login.tsx` & `src/pages/Signup.tsx`:
+    - Expand `friendlyAuthError` to handle specific Supabase error strings (e.g., weak password, provider issues).
 
-### 3. User Interface & Error Handling
-#### [MODIFY] [Login.tsx](file:///E:/NIHONGOPLUS UPDATE TERBARU/src/pages/Login.tsx) and [Signup.tsx](file:///E:/NIHONGOPLUS UPDATE TERBARU/src/pages/Signup.tsx)
-- Improve Google Login error handling (e.g., catching `provider_not_enabled` or user cancellation).
-- Add friendly UI feedback during the redirect process.
+### 3. Production Readiness & Build Fixes
+- [VERIFY] Run `npm run build` and fix any new TypeScript or dependency regressions.
+- [MODIFY] `vercel.json`: Ensure routing is correctly configured for Vercel functions and SPA fallback.
 
-### 4. Setup Guide (Documentation)
-#### [NEW] [GOOGLE_AUTH_SETUP.md](file:///E:/NIHONGOPLUS UPDATE TERBARU/GOOGLE_AUTH_SETUP.md)
-- Provide a step-by-step guide for Google Cloud and Supabase integration.
-
----
+### 4. Documentation
+- [MODIFY] `README.md`: Update status report to reflect the production-ready state.
 
 ## Verification Plan
 
 ### Automated Tests
-- `npm run build`: Ensure no TypeScript regressions.
+- `npm run build`: Must pass successfully.
+- `tsc`: Verify no type errors in the entire project.
 
 ### Manual Verification
-1. **Local Test**: Click "Masuk dengan Google" on localhost. Verify it redirects to Google, allows login, and returns to the Dashboard with a profile created in the `users` table.
-2. **Persistence Test**: Refresh the page after Google login. Verify the session persists.
-3. **Logout Test**: Click Sign Out. Verify the session is cleared.
-4. **Vercel Test**: Deploy to Vercel and verify the `redirectTo` works correctly with the production domain.
+- Test registration flow and verify the `users` table record.
+- Test login flow with specific error messages for wrong credentials.
+- Test session persistence by refreshing the dashboard.

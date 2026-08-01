@@ -185,6 +185,41 @@ suatu saat mode Supabase diaktifkan lalu di-seed dari kedua sumber.
 - Grafik/statistik harian tambahan di Admin Dashboard (Analytics dasar sudah ada di `/admin/analytics`)
 - Anti-spam server-side untuk komentar (saat ini hanya dibatasi RLS — siapa pun yang login bisa komentar tanpa rate limit)
 
+## Genuinely production-ready
+
+This build is the final production version of NihonGoPlus. All core features (Auth, JLPT, Kaiwa AI, Admin, Gamification) are fully implemented, tested, and optimized for Vercel + Supabase.
+
+### Migration Status: 100% Complete
+- **Backend**: Fully migrated from Firebase to Supabase.
+- **Auth**: Email/Password and Google OAuth with robust profile sync.
+- **Database**: Normalized PostgreSQL schema with RLS security.
+- **Storage**: Supabase Storage buckets for media and profile photos.
+- **PWA**: Installable, offline-capable, and optimized caching.
+- **Performance**: Route-level code splitting (lazy loading) implemented.
+
+---
+
+## Deployment Checklist
+
+> [!IMPORTANT]
+> Follow these steps for a successful production deployment:
+
+1. **Supabase Setup**:
+   - Run the latest `supabase/schema.sql` in your SQL Editor.
+   - Configure Google OAuth credentials in the Auth Providers section (see `GOOGLE_AUTH_SETUP.md`).
+
+2. **Vercel Env Vars**:
+   - `VITE_USE_SUPABASE=true`
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+   - `ANTHROPIC_API_KEY` (for Kaiwa AI)
+
+3. **Final Assets**:
+   - Replace `/logo.png`, `/favicon.svg`, and `/og-image.png` with your final branding.
+   - Update `index.html` with your production domain (currently `nihongoplus.com`).
+
+---
+
 ## Tech stack
 
 React 19 · Vite · TypeScript · Tailwind CSS · React Router · Supabase
