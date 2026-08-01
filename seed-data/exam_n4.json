@@ -1,0 +1,17 @@
+[
+  {"level":"N4","section":"goi","question":"この もんだいは とても（　　）です。","options":"ふくざつ|たぶん|じゅんび|やくそく","answer":"0","explanation":"複雑（ふくざつ）berarti \"rumit\", cocok mendeskripsikan soal yang sulit."},
+  {"level":"N4","section":"goi","question":"かれは しごとに（　　）を もって います。","options":"じしん|てんき|きっぷ|ちず","answer":"0","explanation":"自信（じしん）berarti \"kepercayaan diri\", cocok dengan konteks pekerjaan."},
+  {"level":"N4","section":"goi","question":"この みちは（　　）ので、きを つけて ください。","options":"あぶない|やすい|ひろい|あかるい","answer":"0","explanation":"危ない（あぶない）berarti \"berbahaya\", cocok sebagai alasan untuk berhati-hati."},
+  {"level":"N4","section":"goi","question":"かのじょは いつも（　　）せいかくです。","options":"あかるい|くらい|せまい|よわい","answer":"0","explanation":"明るい（あかるい）berarti \"ceria\", cocok mendeskripsikan kepribadian."},
+  {"level":"N4","section":"bunpou","question":"あめが ふって いる＿、さんぽに いきました。","options":"のに|ので|から|まで","answer":"0","explanation":"のに menyatakan pertentangan: \"meskipun hujan, tetap pergi jalan-jalan\"."},
+  {"level":"N4","section":"bunpou","question":"にほんごが じょうずに なる＿、まいにち れんしゅうします。","options":"ように|そうに|らしく|まま","answer":"0","explanation":"ように menyatakan tujuan: \"agar menjadi mahir\"."},
+  {"level":"N4","section":"bunpou","question":"この しごとは あした＿ おわらせなければ なりません。","options":"までに|までは|からは|からに","answer":"0","explanation":"までに menyatakan batas waktu penyelesaian suatu tindakan."},
+  {"level":"N4","section":"bunpou","question":"かれは がくせい＿ とても よく べんきょうします。","options":"にしては|にとって|について|によって","answer":"0","explanation":"にしては berarti \"untuk ukuran ~\", menyatakan sesuatu di luar dugaan umum."},
+  {"level":"N4","section":"bunpou","question":"この でんしゃは とうきょう＿ とまりません。","options":"にしか|にさえ|にも|には","answer":"0","explanation":"にしか...ません berarti \"hanya di Tokyo saja\", menyatakan pembatasan."},
+  {"level":"N4","section":"dokkai","question":"わたしは らいねん りゅうがくする よていです。それで、いま にほんごを べんきょうして います。じゅんびは たいへんですが、たのしいです。\n\n「わたし」は なぜ にほんごを べんきょうして いますか。","options":"らいねん りゅうがくする よていだから|しごとの ため|にほんじんの ともだちが いるから|せんせいに いわれたから","answer":"0","explanation":"Teks menyatakan alasannya adalah rencana studi ke luar negeri tahun depan."},
+  {"level":"N4","section":"dokkai","question":"さいきん、けんこうの ために まいあさ はしって います。さいしょは たいへんでしたが、いまは たのしく なりました。\n\n「わたし」は なぜ はしって いますか。","options":"けんこうの ため|しごとの ため|ともだちの ため|べんきょうの ため","answer":"0","explanation":"Teks menyatakan tujuannya adalah kesehatan (けんこうのため)."},
+  {"level":"N4","section":"choukai","question":"かいぎは 三時に はじまりますが、しりょうの じゅんびが あるので、二時半に きて ください。","options":"Datang jam 2:30 untuk siapkan materi sebelum rapat jam 3|Rapat dimulai jam 2:30|Rapat dibatalkan|Bawa materi sendiri jam 3","answer":"0","explanation":"「二時半に来てください」berarti \"tolong datang jam 2:30\" untuk persiapan sebelum rapat jam 3."},
+  {"level":"N4","section":"choukai","question":"すみません、この にもつを おくりたいんですが、りょうきんは いくらですか。じゅうごひゃくえんです。","options":"1500 yen|1050 yen|500 yen|5000 yen","answer":"0","explanation":"じゅうごひゃくえん berarti 1500 yen."},
+  {"level":"N4","section":"choukai","question":"あしたの てんきよほうです。あさは くもりですが、ごごから はれる でしょう。","options":"Pagi berawan, sore cerah|Pagi cerah, sore hujan|Sepanjang hari hujan|Sepanjang hari berawan","answer":"0","explanation":"「あさはくもり、ごごからはれる」berarti pagi berawan lalu cerah di sore hari."},
+  {"level":"N4","section":"goi","question":"けいかくが うまく いかなくて、しごとを（　　）しました。","options":"たっせい|しっぱい|じゅんび|やくそく","answer":"1","explanation":"「うまくいかなくて」(tidak berjalan lancar) menunjukkan hasil negatif, sehingga 失敗（しっぱい, gagal）adalah jawaban yang tepat."}
+]

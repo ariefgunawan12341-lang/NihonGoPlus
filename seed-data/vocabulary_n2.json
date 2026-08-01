@@ -1,0 +1,17 @@
+[
+  {"id":"n2b-001","kanji":"概念","kana":"がいねん","romaji":"gainen","meaning":"konsep","example_sentence":"新しい概念を学びます。","example_meaning":"Saya mempelajari konsep baru.","category":"kata benda","level":"N2"},
+  {"id":"n2b-002","kanji":"抽象的","kana":"ちゅうしょうてき","romaji":"chuushouteki","meaning":"abstrak","example_sentence":"説明が抽象的すぎます。","example_meaning":"Penjelasannya terlalu abstrak.","category":"kata sifat-na","level":"N2"},
+  {"id":"n2b-003","kanji":"具体的","kana":"ぐたいてき","romaji":"gutaiteki","meaning":"konkret","example_sentence":"具体的な例を挙げてください。","example_meaning":"Tolong berikan contoh yang konkret.","category":"kata sifat-na","level":"N2"},
+  {"id":"n2b-004","kanji":"客観的","kana":"きゃっかんてき","romaji":"kyakkanteki","meaning":"objektif","example_sentence":"客観的に判断します。","example_meaning":"Saya menilai secara objektif.","category":"kata sifat-na","level":"N2"},
+  {"id":"n2b-005","kanji":"主観的","kana":"しゅかんてき","romaji":"shukanteki","meaning":"subjektif","example_sentence":"それは主観的な意見です。","example_meaning":"Itu adalah pendapat yang subjektif.","category":"kata sifat-na","level":"N2"},
+  {"id":"n2b-006","kanji":"融合","kana":"ゆうごう","romaji":"yuugou","meaning":"perpaduan, fusi","example_sentence":"文化の融合が進んでいます。","example_meaning":"Perpaduan budaya sedang berkembang.","category":"kata benda","level":"N2"},
+  {"id":"n2b-007","kanji":"排除","kana":"はいじょ","romaji":"haijo","meaning":"pengecualian, penyingkiran","example_sentence":"不正を排除します。","example_meaning":"Kami menyingkirkan kecurangan.","category":"kata benda","level":"N2"},
+  {"id":"n2b-008","kanji":"促進","kana":"そくしん","romaji":"sokushin","meaning":"mendorong, mempromosikan","example_sentence":"経済成長を促進します。","example_meaning":"Mendorong pertumbuhan ekonomi.","category":"kata benda","level":"N2"},
+  {"id":"n2b-009","kanji":"抑制","kana":"よくせい","romaji":"yokusei","meaning":"penekanan, pengendalian","example_sentence":"感情を抑制します。","example_meaning":"Saya mengendalikan emosi.","category":"kata benda","level":"N2"},
+  {"id":"n2b-010","kanji":"是正","kana":"ぜせい","romaji":"zesei","meaning":"koreksi, perbaikan","example_sentence":"制度の是正が必要です。","example_meaning":"Sistem itu perlu dikoreksi.","category":"kata benda","level":"N2"},
+  {"id":"n2b-011","kanji":"顕著","kana":"けんちょ","romaji":"kencho","meaning":"mencolok, nyata","example_sentence":"効果が顕著に現れました。","example_meaning":"Efeknya terlihat sangat nyata.","category":"kata sifat-na","level":"N2"},
+  {"id":"n2b-012","kanji":"曖昧","kana":"あいまい","romaji":"aimai","meaning":"ambigu, tidak jelas","example_sentence":"返事が曖昧でした。","example_meaning":"Jawabannya tidak jelas.","category":"kata sifat-na","level":"N2"},
+  {"id":"n2b-013","kanji":"深刻","kana":"しんこく","romaji":"shinkoku","meaning":"serius, parah","example_sentence":"深刻な問題です。","example_meaning":"Ini masalah yang serius.","category":"kata sifat-na","level":"N2"},
+  {"id":"n2b-014","kanji":"円滑","kana":"えんかつ","romaji":"enkatsu","meaning":"lancar","example_sentence":"交渉が円滑に進みました。","example_meaning":"Negosiasi berjalan lancar.","category":"kata sifat-na","level":"N2"},
+  {"id":"n2b-015","kanji":"妥当","kana":"だとう","romaji":"datou","meaning":"tepat, wajar","example_sentence":"妥当な価格です。","example_meaning":"Ini harga yang wajar.","category":"kata sifat-na","level":"N2"}
+]

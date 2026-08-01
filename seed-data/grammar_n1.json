@@ -1,0 +1,29 @@
+[
+  {
+    "title": "〜を余儀なくされる",
+    "pattern": "N + を余儀なくされる",
+    "meaning": "terpaksa harus ~ (di luar kehendak)",
+    "explanation": "Menyatakan keadaan terpaksa melakukan sesuatu karena situasi yang tidak bisa dihindari.",
+    "jlpt_level": "N1",
+    "example": "1. 台風で試合の中止を余儀なくされました。\n2. 経営難で工場の閉鎖を余儀なくされました。\n3. 事故で計画変更を余儀なくされました。",
+    "example_meaning": "1. Akibat topan, pertandingan terpaksa dibatalkan.\n2. Akibat kesulitan usaha, pabrik terpaksa ditutup.\n3. Akibat kecelakaan, rencana terpaksa diubah."
+  },
+  {
+    "title": "〜ながらも",
+    "pattern": "Vます-stem／い形容詞／N + ながらも",
+    "meaning": "meskipun ~ (tetap)",
+    "explanation": "Bentuk formal yang menyatakan pertentangan, mirip 〜のに tapi lebih sastra/formal.",
+    "jlpt_level": "N1",
+    "example": "1. 小さいながらも、立派な会社です。\n2. 不安ながらも、挑戦しました。\n3. 貧しいながらも、幸せに暮らしています。",
+    "example_meaning": "1. Meskipun kecil, perusahaan ini hebat.\n2. Meskipun cemas, saya tetap mencoba.\n3. Meskipun miskin, mereka hidup bahagia."
+  },
+  {
+    "title": "〜にたえない",
+    "pattern": "N + にたえない",
+    "meaning": "tak tertahankan, tak sanggup ~",
+    "explanation": "Menyatakan emosi yang sangat kuat sehingga tak tertahankan, atau sesuatu yang terlalu buruk untuk disaksikan.",
+    "jlpt_level": "N1",
+    "example": "1. 見るにたえない光景でした。\n2. 感謝にたえません。\n3. 遺憾にたえません。",
+    "example_meaning": "1. Itu pemandangan yang tak tertahankan untuk dilihat.\n2. Saya sangat berterima kasih (tak tertahankan rasa syukurnya).\n3. Saya sangat menyesalkan hal ini."
+  }
+]

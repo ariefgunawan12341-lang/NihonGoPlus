@@ -1,0 +1,29 @@
+[
+  {
+    "title": "〜おかげで",
+    "pattern": "V/A/N の + おかげで",
+    "meaning": "berkat ~",
+    "explanation": "Menyatakan sebab positif — sesuatu terjadi berkat bantuan/keadaan tertentu.",
+    "jlpt_level": "N3",
+    "example": "1. 先生のおかげで合格しました。\n2. 薬のおかげで元気になりました。\n3. みんなの助けのおかげで成功しました。",
+    "example_meaning": "1. Berkat guru saya, saya lulus.\n2. Berkat obat itu, saya jadi sehat.\n3. Berkat bantuan semua orang, saya berhasil."
+  },
+  {
+    "title": "〜ば〜ほど",
+    "pattern": "Vば形 + ば + V辞書形 + ほど",
+    "meaning": "semakin ~ semakin ~",
+    "explanation": "Menyatakan hubungan proporsional antara dua hal.",
+    "jlpt_level": "N3",
+    "example": "1. 勉強すればするほど、上手になります。\n2. 高ければ高いほど、いいです。\n3. 練習すればするほど、うまくなります。",
+    "example_meaning": "1. Semakin banyak belajar, semakin mahir.\n2. Semakin tinggi, semakin bagus.\n3. Semakin banyak berlatih, semakin pandai."
+  },
+  {
+    "title": "〜わけではない",
+    "pattern": "普通形 + わけではない",
+    "meaning": "bukan berarti ~",
+    "explanation": "Menyangkal kesimpulan yang mungkin diambil pendengar secara parsial.",
+    "jlpt_level": "N3",
+    "example": "1. 嫌いなわけではありません。\n2. 全部分かるわけではありません。\n3. お金がないわけではありません。",
+    "example_meaning": "1. Bukan berarti saya tidak suka.\n2. Bukan berarti saya paham semuanya.\n3. Bukan berarti saya tidak punya uang."
+  }
+]

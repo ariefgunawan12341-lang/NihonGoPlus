@@ -1,0 +1,92 @@
+[
+  {
+    "title": "〜は〜です",
+    "pattern": "N1は N2です",
+    "meaning": "N1 adalah N2 (menyatakan identitas/keadaan)",
+    "explanation": "Pola dasar untuk menyatakan bahwa suatu topik (N1) adalah sesuatu (N2). は menandai topik kalimat.",
+    "jlpt_level": "N5",
+    "example": "1. 私は学生です。\n2. これは本です。\n3. 彼は先生です。\n4. ここは学校です。\n5. 今日は月曜日です。",
+    "example_meaning": "1. Saya adalah murid.\n2. Ini adalah buku.\n3. Dia adalah guru.\n4. Di sini adalah sekolah.\n5. Hari ini adalah hari Senin."
+  },
+  {
+    "title": "〜があります／います",
+    "pattern": "N が あります (benda) / います (makhluk hidup)",
+    "meaning": "ada N",
+    "explanation": "あります dipakai untuk benda mati/abstrak, います untuk manusia dan hewan.",
+    "jlpt_level": "N5",
+    "example": "1. 机の上に本があります。\n2. 部屋に猫がいます。\n3. 公園に子供がいます。\n4. 冷蔵庫に卵があります。\n5. 庭に木があります。",
+    "example_meaning": "1. Ada buku di atas meja.\n2. Ada kucing di kamar.\n3. Ada anak-anak di taman.\n4. Ada telur di kulkas.\n5. Ada pohon di halaman."
+  },
+  {
+    "title": "〜ませんか",
+    "pattern": "Vます-stem + ませんか",
+    "meaning": "maukah kamu ~? (ajakan sopan)",
+    "explanation": "Digunakan untuk mengajak seseorang melakukan sesuatu dengan sopan.",
+    "jlpt_level": "N5",
+    "example": "1. 一緒に行きませんか。\n2. お茶を飲みませんか。\n3. 映画を見ませんか。\n4. 明日会いませんか。\n5. 一緒に食べませんか。",
+    "example_meaning": "1. Maukah pergi bersama?\n2. Maukah minum teh?\n3. Maukah menonton film?\n4. Maukah bertemu besok?\n5. Maukah makan bersama?"
+  },
+  {
+    "title": "〜たいです",
+    "pattern": "Vます-stem + たいです",
+    "meaning": "ingin melakukan ~",
+    "explanation": "Menyatakan keinginan pembicara untuk melakukan suatu tindakan.",
+    "jlpt_level": "N5",
+    "example": "1. 日本へ行きたいです。\n2. 水が飲みたいです。\n3. 早く寝たいです。\n4. 新しい靴を買いたいです。\n5. もっと勉強したいです。",
+    "example_meaning": "1. Saya ingin pergi ke Jepang.\n2. Saya ingin minum air.\n3. Saya ingin cepat tidur.\n4. Saya ingin membeli sepatu baru.\n5. Saya ingin belajar lebih banyak lagi."
+  },
+  {
+    "title": "〜てください",
+    "pattern": "Vて-form + ください",
+    "meaning": "tolong lakukan ~",
+    "explanation": "Digunakan untuk meminta atau memerintah dengan sopan.",
+    "jlpt_level": "N5",
+    "example": "1. ここに座ってください。\n2. 窓を開けてください。\n3. ゆっくり話してください。\n4. もう一度言ってください。\n5. 静かにしてください。",
+    "example_meaning": "1. Tolong duduk di sini.\n2. Tolong buka jendelanya.\n3. Tolong bicara pelan-pelan.\n4. Tolong katakan sekali lagi.\n5. Tolong diam."
+  },
+  {
+    "title": "〜ないでください",
+    "pattern": "Vない-form + でください",
+    "meaning": "tolong jangan lakukan ~",
+    "explanation": "Bentuk negatif dari 〜てください, digunakan untuk meminta seseorang tidak melakukan sesuatu.",
+    "jlpt_level": "N5",
+    "example": "1. ここで写真を撮らないでください。\n2. 心配しないでください。\n3. 遅れないでください。\n4. ここに入らないでください。\n5. 大きい声で話さないでください。",
+    "example_meaning": "1. Tolong jangan foto di sini.\n2. Tolong jangan khawatir.\n3. Tolong jangan terlambat.\n4. Tolong jangan masuk ke sini.\n5. Tolong jangan bicara keras-keras."
+  },
+  {
+    "title": "〜から〜まで",
+    "pattern": "N1 から N2 まで",
+    "meaning": "dari N1 sampai N2",
+    "explanation": "Menyatakan rentang waktu atau tempat dari titik awal ke titik akhir.",
+    "jlpt_level": "N5",
+    "example": "1. 月曜日から金曜日まで働きます。\n2. 家から駅まで歩きます。\n3. 九時から五時まで会社にいます。\n4. 東京から大阪まで新幹線で行きます。\n5. 朝から晩まで勉強しました。",
+    "example_meaning": "1. Saya bekerja dari hari Senin sampai Jumat.\n2. Saya berjalan dari rumah sampai stasiun.\n3. Saya di kantor dari jam sembilan sampai jam lima.\n4. Saya pergi dari Tokyo ke Osaka naik shinkansen.\n5. Saya belajar dari pagi sampai malam."
+  },
+  {
+    "title": "〜ながら",
+    "pattern": "Vます-stem + ながら",
+    "meaning": "sambil melakukan ~",
+    "explanation": "Menyatakan dua tindakan yang dilakukan bersamaan oleh satu orang.",
+    "jlpt_level": "N5",
+    "example": "1. 音楽を聞きながら勉強します。\n2. テレビを見ながらご飯を食べます。\n3. 歩きながら話しました。\n4. コーヒーを飲みながら本を読みます。\n5. 歌いながら料理します。",
+    "example_meaning": "1. Saya belajar sambil mendengarkan musik.\n2. Saya makan sambil menonton TV.\n3. Saya berbicara sambil berjalan.\n4. Saya membaca buku sambil minum kopi.\n5. Saya memasak sambil bernyanyi."
+  },
+  {
+    "title": "〜前に／〜後で",
+    "pattern": "V辞書形 + 前に／Vた形 + 後で",
+    "meaning": "sebelum ~ / setelah ~",
+    "explanation": "前に dipakai dengan bentuk kamus (menyatakan sebelum), 後で dipakai dengan bentuk lampau (menyatakan setelah).",
+    "jlpt_level": "N5",
+    "example": "1. 寝る前に歯を磨きます。\n2. 食べる前に手を洗います。\n3. 仕事の後で買い物します。\n4. 勉強した後でテレビを見ます。\n5. 帰る前に電話します。",
+    "example_meaning": "1. Saya sikat gigi sebelum tidur.\n2. Saya cuci tangan sebelum makan.\n3. Saya belanja setelah kerja.\n4. Saya menonton TV setelah belajar.\n5. Saya menelepon sebelum pulang."
+  },
+  {
+    "title": "〜ことができます",
+    "pattern": "V辞書形 + ことができます",
+    "meaning": "bisa melakukan ~",
+    "explanation": "Menyatakan kemampuan untuk melakukan suatu tindakan.",
+    "jlpt_level": "N5",
+    "example": "1. 日本語を話すことができます。\n2. 泳ぐことができます。\n3. 漢字を読むことができます。\n4. 車を運転することができます。\n5. ピアノを弾くことができます。",
+    "example_meaning": "1. Saya bisa berbicara bahasa Jepang.\n2. Saya bisa berenang.\n3. Saya bisa membaca kanji.\n4. Saya bisa menyetir mobil.\n5. Saya bisa bermain piano."
+  }
+]

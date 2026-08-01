@@ -1,0 +1,22 @@
+[
+  {"id":"n3b-001","kanji":"要求","kana":"ようきゅう","romaji":"youkyuu","meaning":"tuntutan, permintaan","example_sentence":"給料の引き上げを要求しました。","example_meaning":"Kami menuntut kenaikan gaji.","category":"kata benda","level":"N3"},
+  {"id":"n3b-002","kanji":"解決","kana":"かいけつ","romaji":"kaiketsu","meaning":"penyelesaian","example_sentence":"問題を解決します。","example_meaning":"Saya menyelesaikan masalah.","category":"kata benda","level":"N3"},
+  {"id":"n3b-003","kanji":"判断","kana":"はんだん","romaji":"handan","meaning":"keputusan, penilaian","example_sentence":"自分で判断してください。","example_meaning":"Silakan putuskan sendiri.","category":"kata benda","level":"N3"},
+  {"id":"n3b-004","kanji":"検討","kana":"けんとう","romaji":"kentou","meaning":"pertimbangan","example_sentence":"計画を検討しています。","example_meaning":"Kami sedang mempertimbangkan rencana itu.","category":"kata benda","level":"N3"},
+  {"id":"n3b-005","kanji":"実施","kana":"じっし","romaji":"jisshi","meaning":"pelaksanaan","example_sentence":"新しい制度を実施します。","example_meaning":"Kami akan melaksanakan sistem baru.","category":"kata benda","level":"N3"},
+  {"id":"n3b-006","kanji":"対応","kana":"たいおう","romaji":"taiou","meaning":"penanganan, respons","example_sentence":"クレームに対応します。","example_meaning":"Kami menangani keluhan pelanggan.","category":"kata benda","level":"N3"},
+  {"id":"n3b-007","kanji":"維持","kana":"いじ","romaji":"iji","meaning":"mempertahankan, memelihara","example_sentence":"健康を維持します。","example_meaning":"Saya menjaga kesehatan.","category":"kata benda","level":"N3"},
+  {"id":"n3b-008","kanji":"改善","kana":"かいぜん","romaji":"kaizen","meaning":"perbaikan","example_sentence":"作業の効率を改善します。","example_meaning":"Kami memperbaiki efisiensi kerja.","category":"kata benda","level":"N3"},
+  {"id":"n3b-009","kanji":"損害","kana":"そんがい","romaji":"songai","meaning":"kerugian","example_sentence":"台風で大きい損害が出ました。","example_meaning":"Topan menyebabkan kerugian besar.","category":"kata benda","level":"N3"},
+  {"id":"n3b-010","kanji":"効果","kana":"こうか","romaji":"kouka","meaning":"efek, dampak","example_sentence":"この薬は効果があります。","example_meaning":"Obat ini memiliki efek yang baik.","category":"kata benda","level":"N3"},
+  {"id":"n3b-011","kanji":"傾向","kana":"けいこう","romaji":"keikou","meaning":"kecenderungan","example_sentence":"物価が上がる傾向にあります。","example_meaning":"Harga barang cenderung naik.","category":"kata benda","level":"N3"},
+  {"id":"n3b-012","kanji":"割合","kana":"わりあい","romaji":"wariai","meaning":"proporsi, rasio","example_sentence":"女性の割合が増えています。","example_meaning":"Proporsi perempuan meningkat.","category":"kata benda","level":"N3"},
+  {"id":"n3b-013","kanji":"根拠","kana":"こんきょ","romaji":"konkyo","meaning":"dasar, bukti","example_sentence":"根拠のない話です。","example_meaning":"Ini cerita tanpa dasar.","category":"kata benda","level":"N3"},
+  {"id":"n3b-014","kanji":"矛盾","kana":"むじゅん","romaji":"mujun","meaning":"kontradiksi","example_sentence":"その説明には矛盾があります。","example_meaning":"Penjelasan itu mengandung kontradiksi.","category":"kata benda","level":"N3"},
+  {"id":"n3b-015","kanji":"普及","kana":"ふきゅう","romaji":"fukyuu","meaning":"penyebarluasan, popularisasi","example_sentence":"スマホが普及しました。","example_meaning":"Ponsel pintar sudah tersebar luas.","category":"kata benda","level":"N3"},
+  {"id":"n3b-016","kanji":"従う","kana":"したがう","romaji":"shitagau","meaning":"mengikuti, mematuhi","example_sentence":"規則に従います。","example_meaning":"Saya mematuhi peraturan.","category":"kata kerja","level":"N3"},
+  {"id":"n3b-017","kanji":"逆らう","kana":"さからう","romaji":"sakarau","meaning":"melawan, menentang","example_sentence":"親に逆らいました。","example_meaning":"Saya menentang orang tua.","category":"kata kerja","level":"N3"},
+  {"id":"n3b-018","kanji":"抱える","kana":"かかえる","romaji":"kakaeru","meaning":"memikul, menanggung","example_sentence":"問題を抱えています。","example_meaning":"Saya sedang menanggung masalah.","category":"kata kerja","level":"N3"},
+  {"id":"n3b-019","kanji":"支える","kana":"ささえる","romaji":"sasaeru","meaning":"menopang, mendukung","example_sentence":"家族を支えます。","example_meaning":"Saya menopang keluarga.","category":"kata kerja","level":"N3"},
+  {"id":"n3b-020","kanji":"整える","kana":"ととのえる","romaji":"totonoeru","meaning":"merapikan, menata","example_sentence":"環境を整えます。","example_meaning":"Saya menata lingkungan.","category":"kata kerja","level":"N3"}
+]

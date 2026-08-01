@@ -1,0 +1,17 @@
+[
+  {"id":"n1b-001","kanji":"顧みる","kana":"かえりみる","romaji":"kaerimiru","meaning":"merenungkan, menoleh ke belakang","example_sentence":"過去を顧みて反省します。","example_meaning":"Saya merenungkan masa lalu dan introspeksi.","category":"kata kerja","level":"N1"},
+  {"id":"n1b-002","kanji":"著しい","kana":"いちじるしい","romaji":"ichijirushii","meaning":"mencolok, luar biasa","example_sentence":"著しい進歩が見られます。","example_meaning":"Terlihat kemajuan yang luar biasa.","category":"kata sifat","level":"N1"},
+  {"id":"n1b-003","kanji":"是非もない","kana":"ぜひもない","romaji":"zehimonai","meaning":"tidak bisa dihindari","example_sentence":"これは是非もないことです。","example_meaning":"Ini adalah hal yang tidak bisa dihindari.","category":"ungkapan","level":"N1"},
+  {"id":"n1b-004","kanji":"崩壊","kana":"ほうかい","romaji":"houkai","meaning":"keruntuhan, kehancuran","example_sentence":"経済が崩壊しました。","example_meaning":"Ekonomi mengalami keruntuhan.","category":"kata benda","level":"N1"},
+  {"id":"n1b-005","kanji":"軽率","kana":"けいそつ","romaji":"keisotsu","meaning":"ceroboh, sembrono","example_sentence":"軽率な発言でした。","example_meaning":"Itu adalah pernyataan yang ceroboh.","category":"kata sifat-na","level":"N1"},
+  {"id":"n1b-006","kanji":"精巧","kana":"せいこう","romaji":"seikou","meaning":"presisi, halus (buatan)","example_sentence":"精巧な機械を作ります。","example_meaning":"Membuat mesin yang sangat presisi.","category":"kata sifat-na","level":"N1"},
+  {"id":"n1b-007","kanji":"露骨","kana":"ろこつ","romaji":"rokotsu","meaning":"terang-terangan, blak-blakan","example_sentence":"露骨な態度を取りました。","example_meaning":"Dia menunjukkan sikap yang terang-terangan.","category":"kata sifat-na","level":"N1"},
+  {"id":"n1b-008","kanji":"円熟","kana":"えんじゅく","romaji":"enjuku","meaning":"kematangan, kedewasaan (kemampuan)","example_sentence":"円熟した技術を持っています。","example_meaning":"Dia memiliki keterampilan yang sudah matang.","category":"kata benda","level":"N1"},
+  {"id":"n1b-009","kanji":"潜在的","kana":"せんざいてき","romaji":"senzaiteki","meaning":"potensial, tersembunyi","example_sentence":"潜在的な危険があります。","example_meaning":"Ada bahaya yang tersembunyi.","category":"kata sifat-na","level":"N1"},
+  {"id":"n1b-010","kanji":"払拭","kana":"ふっしょく","romaji":"fusshoku","meaning":"menghapus, menyingkirkan (keraguan)","example_sentence":"不安を払拭しました。","example_meaning":"Saya menghapus rasa cemas.","category":"kata benda","level":"N1"},
+  {"id":"n1b-011","kanji":"逸脱","kana":"いつだつ","romaji":"itsudatsu","meaning":"penyimpangan","example_sentence":"規則から逸脱しています。","example_meaning":"Ini menyimpang dari aturan.","category":"kata benda","level":"N1"},
+  {"id":"n1b-012","kanji":"卓越","kana":"たくえつ","romaji":"takuetsu","meaning":"keunggulan, keistimewaan","example_sentence":"卓越した才能があります。","example_meaning":"Dia memiliki bakat yang unggul.","category":"kata benda","level":"N1"},
+  {"id":"n1b-013","kanji":"甚だしい","kana":"はなはだしい","romaji":"hanahadashii","meaning":"amat sangat, ekstrem","example_sentence":"甚だしい誤解です。","example_meaning":"Ini kesalahpahaman yang amat sangat.","category":"kata sifat","level":"N1"},
+  {"id":"n1b-014","kanji":"愚痴","kana":"ぐち","romaji":"guchi","meaning":"keluhan, gerutuan","example_sentence":"愚痴を言わないでください。","example_meaning":"Tolong jangan mengeluh.","category":"kata benda","level":"N1"},
+  {"id":"n1b-015","kanji":"儚い","kana":"はかない","romaji":"hakanai","meaning":"fana, singkat (kehidupan)","example_sentence":"儚い人生を感じます。","example_meaning":"Saya merasakan kehidupan yang fana.","category":"kata sifat","level":"N1"}
+]

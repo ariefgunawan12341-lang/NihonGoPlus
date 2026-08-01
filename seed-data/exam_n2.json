@@ -1,0 +1,12 @@
+[
+  {"level":"N2","section":"goi","question":"かのじょの せつめいは（　　）すぎて、わかりにくいです。","options":"ちゅうしょうてき|ぐたいてき|きゃっかんてき|えんかつ","answer":"0","explanation":"抽象的（ちゅうしょうてき, abstrak）cocok dengan konteks penjelasan yang sulit dipahami."},
+  {"level":"N2","section":"goi","question":"かれの はんだんは とても（　　）です。","options":"きゃっかんてき|しゅかんてき|あいまい|だとう","answer":"0","explanation":"客観的（きゃっかんてき, objektif）cocok dengan konteks penilaian yang adil."},
+  {"level":"N2","section":"goi","question":"この もんだいは（　　）な もんだいです。","options":"しんこく|えんかつ|だとう|けんちょ","answer":"0","explanation":"深刻（しんこく, serius）cocok mendeskripsikan masalah yang berat."},
+  {"level":"N2","section":"bunpou","question":"あめ＿、しあいは おこなわれました。","options":"にもかかわらず|につけ|としても|としたら","answer":"0","explanation":"にもかかわらず berarti \"meskipun\", menyatakan hasil bertentangan dengan kondisi sebelumnya."},
+  {"level":"N2","section":"bunpou","question":"さんざん なやんだ＿、あきらめました。","options":"あげく|とたん|きり|なり","answer":"0","explanation":"あげく menyatakan hasil akhir negatif setelah proses panjang."},
+  {"level":"N2","section":"bunpou","question":"じょうきょうは かいぜんし＿ あります。","options":"つつ|きり|がち|ぎみ","answer":"0","explanation":"つつある menyatakan perubahan yang sedang berlangsung secara bertahap."},
+  {"level":"N2","section":"dokkai","question":"この せいさくは しみんの はんたいに もかかわらず、じっしされました。せいふは けいざいの ためだと せつめいして います。\n\n せいふが せいさくを じっしした りゆうは なんですか。","options":"けいざいの ため|しみんの ため|かんきょうの ため|がいこくの ため","answer":"0","explanation":"Teks menyatakan pemerintah menjelaskan alasannya adalah demi ekonomi."},
+  {"level":"N2","section":"dokkai","question":"ぎじゅつの はったつに ともなって、しごとの かたちも おおきく へんかしつつ あります。\n\n なにが へんかしつつ ありますか。","options":"しごとの かたち|きこうの へんか|じんこうの すう|ぶっかの すいい","answer":"0","explanation":"Teks menyatakan bentuk pekerjaan sedang berubah seiring perkembangan teknologi."},
+  {"level":"N2","section":"choukai","question":"けんきゅうの けっか、この やくは こうかが けんちょに あらわれる ことが わかりました。","options":"Hasil penelitian menunjukkan obat ini efeknya sangat nyata|Obat ini tidak ada efeknya|Penelitian dihentikan|Efeknya belum diketahui","answer":"0","explanation":"「こうかがけんちょにあらわれる」berarti efeknya terlihat sangat nyata/mencolok."},
+  {"level":"N2","section":"choukai","question":"こうしょうは えんかつに すすみ、りょうしゃが まんぞくする けっかと なりました。","options":"Negosiasi berjalan lancar dan kedua pihak puas|Negosiasi gagal total|Salah satu pihak tidak puas|Negosiasi masih berlangsung","answer":"0","explanation":"「えんかつにすすみ」berarti berjalan lancar, dan kedua pihak (りょうしゃ) merasa puas."}
+]

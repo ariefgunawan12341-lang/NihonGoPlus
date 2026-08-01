@@ -1,0 +1,12 @@
+[
+  {"level":"N3","section":"goi","question":"かのじょの せつめいには（　　）が あります。","options":"むじゅん|こんきょ|わりあい|けいこう","answer":"0","explanation":"矛盾（むじゅん, kontradiksi）cocok dengan konteks penjelasan yang tidak konsisten."},
+  {"level":"N3","section":"goi","question":"かいしゃの もんだいを（　　）しなければ なりません。","options":"かいけつ|いじ|たいおう|かいぜん","answer":"0","explanation":"解決（かいけつ, menyelesaikan）cocok dengan konteks menyelesaikan masalah."},
+  {"level":"N3","section":"goi","question":"けんこうを（　　）ために、うんどうします。","options":"いじする|かいけつする|はんだんする|けんとうする","answer":"0","explanation":"維持する（いじする, mempertahankan）cocok dengan konteks menjaga kesehatan."},
+  {"level":"N3","section":"bunpou","question":"かれは わかい＿、けいけんが ゆたかです。","options":"わりに|わけに|くせに|ものの","answer":"0","explanation":"わりに berarti \"dibandingkan dengan\", menyatakan sesuatu di luar dugaan."},
+  {"level":"N3","section":"bunpou","question":"べんきょう＿ べんきょうするほど、わからなく なりました。","options":"すれば|しても|するのに|したら","answer":"0","explanation":"Pola ば〜ほど menyatakan hubungan proporsional; すればするほど berarti \"semakin belajar semakin\"."},
+  {"level":"N3","section":"bunpou","question":"かれが きらいな＿ では ありません。","options":"わけ|もの|こと|はず","answer":"0","explanation":"わけではありません berarti \"bukan berarti\", menyangkal kesimpulan."},
+  {"level":"N3","section":"dokkai","question":"さいきん、かいしゃで しんせいひんの かいはつを すすめて います。しかし、よさんの もんだいで、けいかくどおりに すすんで いません。\n\n「かいしゃ」の もんだいは なんですか。","options":"よさんの もんだい|しゃいんの もんだい|ばしょの もんだい|じかんの もんだい","answer":"0","explanation":"Teks menyebutkan masalahnya adalah anggaran (よさんのもんだい)."},
+  {"level":"N3","section":"dokkai","question":"この ちいきは じんこうが げんしょうして いますが、かんこうきゃくは ぞうかして います。\n\n この ちいきで ふえて いる ものは なんですか。","options":"かんこうきゃく|じんこう|がっこう|こうじょう","answer":"0","explanation":"Teks menyatakan wisatawan (かんこうきゃく) meningkat sementara populasi menurun."},
+  {"level":"N3","section":"choukai","question":"かいぎの けっか、けいかくは らいげつまで えんきする ことに なりました。りゆうは よさんが たりないからです。","options":"Rencana ditunda sampai bulan depan karena anggaran kurang|Rencana dibatalkan total|Rencana dipercepat|Anggaran sudah cukup","answer":"0","explanation":"「らいげつまでえんきする」berarti ditunda sampai bulan depan, alasannya anggaran tidak cukup."},
+  {"level":"N3","section":"choukai","question":"しんせいひんの はんばいは よそうより おおく、かいしゃの りえきが ふえました。","options":"Penjualan produk baru melebihi perkiraan, keuntungan naik|Penjualan produk baru menurun|Perusahaan mengalami kerugian|Produk baru dibatalkan","answer":"0","explanation":"Teks menyatakan penjualan melebihi perkiraan sehingga keuntungan meningkat."}
+]

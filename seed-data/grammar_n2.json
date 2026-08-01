@@ -1,0 +1,29 @@
+[
+  {
+    "title": "〜にもかかわらず",
+    "pattern": "N／普通形 + にもかかわらず",
+    "meaning": "meskipun ~, walaupun ~",
+    "explanation": "Menyatakan hasil yang bertentangan dengan yang diharapkan dari kondisi sebelumnya.",
+    "jlpt_level": "N2",
+    "example": "1. 雨にもかかわらず、試合が行われました。\n2. 忙しいにもかかわらず、手伝ってくれました。\n3. 若いにもかかわらず、経験が豊富です。",
+    "example_meaning": "1. Meskipun hujan, pertandingan tetap diadakan.\n2. Meskipun sibuk, dia tetap membantu.\n3. Meskipun masih muda, pengalamannya banyak."
+  },
+  {
+    "title": "〜あげく",
+    "pattern": "Vた形 + あげく",
+    "meaning": "akhirnya, ujung-ujungnya (hasil negatif)",
+    "explanation": "Menyatakan hasil akhir yang tidak diinginkan setelah proses panjang.",
+    "jlpt_level": "N2",
+    "example": "1. さんざん悩んだあげく、諦めました。\n2. 長く待ったあげく、結局会えませんでした。\n3. 迷ったあげく、間違った道を選びました。",
+    "example_meaning": "1. Setelah bimbang lama, akhirnya saya menyerah.\n2. Setelah menunggu lama, akhirnya tidak bertemu juga.\n3. Setelah bimbang, akhirnya saya memilih jalan yang salah."
+  },
+  {
+    "title": "〜つつある",
+    "pattern": "Vます-stem + つつある",
+    "meaning": "sedang dalam proses ~",
+    "explanation": "Menyatakan perubahan yang sedang berlangsung secara bertahap (lebih formal dari ている).",
+    "jlpt_level": "N2",
+    "example": "1. 状況は改善しつつあります。\n2. 人口が減りつつあります。\n3. 技術は進歩しつつあります。",
+    "example_meaning": "1. Situasinya sedang membaik.\n2. Populasinya sedang menurun.\n3. Teknologinya sedang berkembang."
+  }
+]

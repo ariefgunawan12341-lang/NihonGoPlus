@@ -1,0 +1,56 @@
+[
+  {
+    "title": "〜なければなりません",
+    "pattern": "Vない-form (drop い) + ければなりません",
+    "meaning": "harus melakukan ~",
+    "explanation": "Menyatakan kewajiban atau keharusan melakukan sesuatu.",
+    "jlpt_level": "N4",
+    "example": "1. 薬を飲まなければなりません。\n2. 明日早く起きなければなりません。\n3. 宿題をしなければなりません。\n4. 規則を守らなければなりません。\n5. もっと勉強しなければなりません。",
+    "example_meaning": "1. Saya harus minum obat.\n2. Saya harus bangun pagi besok.\n3. Saya harus mengerjakan PR.\n4. Saya harus mematuhi peraturan.\n5. Saya harus belajar lebih giat."
+  },
+  {
+    "title": "〜てもいいです",
+    "pattern": "Vて-form + もいいです",
+    "meaning": "boleh melakukan ~",
+    "explanation": "Menyatakan izin untuk melakukan sesuatu.",
+    "jlpt_level": "N4",
+    "example": "1. ここに座ってもいいです。\n2. 写真を撮ってもいいですか。\n3. もう帰ってもいいですよ。\n4. この本を借りてもいいですか。\n5. 窓を開けてもいいですか。",
+    "example_meaning": "1. Boleh duduk di sini.\n2. Bolehkah saya foto?\n3. Kamu boleh pulang sekarang.\n4. Bolehkah saya pinjam buku ini?\n5. Bolehkah saya buka jendelanya?"
+  },
+  {
+    "title": "〜てはいけません",
+    "pattern": "Vて-form + はいけません",
+    "meaning": "tidak boleh melakukan ~",
+    "explanation": "Menyatakan larangan.",
+    "jlpt_level": "N4",
+    "example": "1. ここでタバコを吸ってはいけません。\n2. 授業中に話してはいけません。\n3. うそをついてはいけません。\n4. ここに駐車してはいけません。\n5. 遅刻してはいけません。",
+    "example_meaning": "1. Tidak boleh merokok di sini.\n2. Tidak boleh bicara saat kelas berlangsung.\n3. Tidak boleh berbohong.\n4. Tidak boleh parkir di sini.\n5. Tidak boleh terlambat."
+  },
+  {
+    "title": "〜そうです（様態）",
+    "pattern": "Vます-stem／い形容詞-stem + そうです",
+    "meaning": "terlihat seperti akan ~ / tampaknya ~",
+    "explanation": "Menyatakan perkiraan berdasarkan penampilan luar.",
+    "jlpt_level": "N4",
+    "example": "1. 雨が降りそうです。\n2. このケーキはおいしそうです。\n3. 彼は疲れていそうです。\n4. 橋が壊れそうです。\n5. 楽しそうですね。",
+    "example_meaning": "1. Sepertinya akan turun hujan.\n2. Kue ini kelihatannya enak.\n3. Dia sepertinya lelah.\n4. Jembatan itu sepertinya akan roboh.\n5. Kelihatannya menyenangkan ya."
+  },
+  {
+    "title": "〜たら",
+    "pattern": "Vた形 + ら",
+    "meaning": "jika/setelah ~ (pengandaian)",
+    "explanation": "Menyatakan syarat atau urutan kejadian; jika X terjadi, maka Y.",
+    "jlpt_level": "N4",
+    "example": "1. 雨が降ったら、行きません。\n2. お金があったら、旅行します。\n3. 家に着いたら、電話します。\n4. 時間があったら、手伝ってください。\n5. 分からなかったら、聞いてください。",
+    "example_meaning": "1. Jika hujan, saya tidak akan pergi.\n2. Jika punya uang, saya akan bepergian.\n3. Setelah sampai rumah, saya akan menelepon.\n4. Jika ada waktu, tolong bantu saya.\n5. Jika tidak mengerti, silakan bertanya."
+  },
+  {
+    "title": "〜ようになります",
+    "pattern": "V辞書形／V可能形 + ようになります",
+    "meaning": "menjadi bisa/terjadi ~ (perubahan bertahap)",
+    "explanation": "Menyatakan perubahan keadaan menjadi bisa melakukan sesuatu, biasanya secara bertahap.",
+    "jlpt_level": "N4",
+    "example": "1. 漢字が読めるようになりました。\n2. 一人で料理ができるようになりました。\n3. 早く起きるようになりました。\n4. 日本語で話せるようになりました。\n5. 野菜を食べるようになりました。",
+    "example_meaning": "1. Saya jadi bisa membaca kanji.\n2. Saya jadi bisa memasak sendiri.\n3. Saya jadi terbiasa bangun pagi.\n4. Saya jadi bisa berbicara dalam bahasa Jepang.\n5. Saya jadi mau makan sayur."
+  }
+]
