@@ -8,6 +8,7 @@ import {
   localGetProfile,
   localUpdateProfile,
   localChangePassword,
+  localDeleteAccount,
   getSessionUid
 } from '../services/localAuth'
 import { fetchSupabaseProfile, createSupabaseProfile, updateSupabaseProfile } from '../services/supabaseUserProfile'
@@ -23,6 +24,7 @@ interface AuthContextValue {
   refreshProfile: () => Promise<void>
   changePassword: (oldPassword: string, newPassword: string) => Promise<void>
   forgotPassword: (email: string) => Promise<void>
+  deleteAccount: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -48,17 +50,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (session?.user) {
           let profile = await fetchSupabaseProfile(session.user.id)
           if (!profile && event === 'SIGNED_IN') {
-            // Only treat "no profile row yet" as "brand new OAuth user" on an
-            // actual fresh sign-in event — never on INITIAL_SESSION/TOKEN_REFRESHED,
-            // where a null result is far more likely to be a transient fetch
-            // hiccup than a genuinely new account, and blindly creating a
-            // fallback profile there is what caused the admin-flag regression.
             const meta = session.user.user_metadata ?? {}
             profile = {
               uid: session.user.id,
               email: session.user.email ?? '',
               displayName: meta.full_name ?? meta.name ?? session.user.email?.split('@')[0] ?? 'User',
-              username: session.user.email?.split('@')[0],
+              username: meta.user_name ?? session.user.email?.split('@')[0],
               photoURL: meta.avatar_url ?? meta.picture,
               createdAt: Date.now(),
               xp: 0,
@@ -67,17 +64,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               lastStudyDate: null,
               isPremium: false,
               isAdmin: false,
-              role: 'user'
+              role: 'user',
+              language: 'en',
+              bio: '',
+              country: '',
+              targetLevel: 'N5'
             }
             try {
               await createSupabaseProfile(profile)
             } catch {
-              // Row already exists (e.g. race with another tab/request) — 
-              // re-fetch the real one instead of trusting our fallback.
               profile = await fetchSupabaseProfile(session.user.id)
             }
           }
-          if (profile) setUser(profile)
+          if (profile) {
+            if (profile.isSuspended) {
+              if (supabase) await supabase.auth.signOut()
+              setUser(null)
+              // We can't easily show a toast from here without risking a
+              // render-cycle loop, but most users will see the sign-in
+              // error if they try to log back in.
+            } else {
+              setUser(profile)
+            }
+          }
         } else {
           setUser(null)
         }
@@ -125,9 +134,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) throw error
       const profile = await fetchSupabaseProfile(data.user.id)
+      if (profile?.isSuspended) {
+        await supabase.auth.signOut()
+        throw new Error('Akun Anda telah ditangguhkan (suspended). Silakan hubungi admin.')
+      }
       setUser(profile)
     } else {
       const profile = await localSignIn(email, password)
+      if (profile.isSuspended) {
+        throw new Error('Akun Anda telah ditangguhkan (suspended).')
+      }
       setUser(profile)
     }
   }
@@ -138,12 +154,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin }
+      options: {
+        redirectTo: window.location.origin,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        }
+      }
     })
     if (error) throw error
-    // Supabase redirects the whole page to Google, then back — the profile
-    // fetch/create happens in onAuthStateChange above once the redirect
-    // completes, so there's nothing further to do here.
   }
 
   async function signOutUser() {
@@ -202,8 +221,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function deleteAccount() {
+    if (!user) return
+    if (USE_SUPABASE && supabase) {
+      // In Supabase, users can't delete themselves easily via the client SDK
+      // if they have RLS restrictions or if they aren't using the Admin API.
+      // We'll call a hypothetical RPC or just the delete profile logic.
+      // Real production usually uses an Edge Function for this.
+      const { error } = await supabase.from('users').delete().eq('uid', user.uid)
+      if (error) throw error
+      await supabase.auth.signOut()
+    } else {
+      localDeleteAccount(user.uid)
+    }
+    setUser(null)
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, signUp, signIn, signInWithGoogle, signOutUser, updateProfile, refreshProfile, changePassword, forgotPassword }}>
+    <AuthContext.Provider value={{ user, loading, signUp, signIn, signInWithGoogle, signOutUser, updateProfile, refreshProfile, changePassword, forgotPassword, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   )

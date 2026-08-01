@@ -46,8 +46,11 @@ export async function localSignUp(email: string, password: string, displayName: 
     streak: 0,
     lastStudyDate: null,
     isPremium: false,
-    // First account created on a fresh install becomes admin, for convenience.
-    isAdmin: users.length === 0
+    isAdmin: users.length === 0,
+    isSuspended: false,
+    bio: '',
+    country: '',
+    targetLevel: 'N5'
   }
   users.push({ profile, passwordHash: await hash(password) })
   writeUsers(users)
@@ -66,6 +69,13 @@ export async function localSignIn(email: string, password: string): Promise<User
 }
 
 export function localSignOut() {
+  localStorage.removeItem(SESSION_KEY)
+}
+
+export function localDeleteAccount(uid: string) {
+  const users = readUsers()
+  const filtered = users.filter((u) => u.profile.uid !== uid)
+  writeUsers(filtered)
   localStorage.removeItem(SESSION_KEY)
 }
 

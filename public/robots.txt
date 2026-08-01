@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /admin/*
 
-Sitemap: https://nihongoplus.example.com/sitemap.xml
+Sitemap: https://nihongoplus.com/sitemap.xml

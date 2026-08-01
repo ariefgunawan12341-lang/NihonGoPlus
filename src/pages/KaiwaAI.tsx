@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Send, MessageCircle, AlertCircle, Award, GraduationCap } from 'lucide-react'
+import { Send, MessageCircle, AlertCircle, Award, GraduationCap, Volume2, VolumeX } from 'lucide-react'
 import clsx from 'clsx'
 import { useAuth } from '../contexts/AuthContext'
 import { userKaiwaCollection } from '../services/db'
@@ -37,6 +37,19 @@ const QUICK_ACTIONS = [
   { label: 'Jelaskan grammar', prefix: 'Tolong jelaskan grammar ini: ' }
 ]
 
+function speak(text: string) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel() // Stop current audio
+    const utter = new SpeechSynthesisUtterance(text)
+    utter.lang = 'ja-JP'
+    // Try to find a natural male voice for "Arif Boncel Sensei"
+    const voices = window.speechSynthesis.getVoices()
+    const maleVoice = voices.find(v => v.lang.startsWith('ja') && (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google 日本語')))
+    if (maleVoice) utter.voice = maleVoice
+    window.speechSynthesis.speak(utter)
+  }
+}
+
 export default function KaiwaAI() {
   const { user, updateProfile } = useAuth()
   const [mode, setMode] = useState<string | null>(null)
@@ -48,7 +61,13 @@ export default function KaiwaAI() {
   const [error, setError] = useState<string | null>(null)
   const [score, setScore] = useState<{ score: number; feedback: string } | null>(null)
   const [scoring, setScoring] = useState(false)
+  const [autoTts, setAutoTts] = useState(true)
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    // Chrome needs this to load voices properly
+    window.speechSynthesis.getVoices()
+  }, [])
 
   const isFreeChat = mode === 'free-chat'
 
@@ -95,6 +114,8 @@ export default function KaiwaAI() {
       const finalMessages = [...nextMessages, reply]
       setMessages(finalMessages)
       if (data.correction) setCorrection(data.correction)
+
+      if (autoTts) speak(data.reply)
 
       if (user) {
         const kaiwaCollection = userKaiwaCollection(user.uid)
@@ -170,13 +191,6 @@ export default function KaiwaAI() {
             </button>
           ))}
         </div>
-        <div className="card p-4 mt-5 flex items-start gap-2 text-xs text-ink-soft">
-          <AlertCircle size={16} className="shrink-0 mt-0.5" />
-          <p>
-            {SENSEI_NAME} memanggil server function yang terhubung ke Anthropic API. Butuh <code>ANTHROPIC_API_KEY</code> di
-            environment deployment Anda — lihat bagian Kaiwa AI di README.
-          </p>
-        </div>
       </div>
     )
   }
@@ -189,6 +203,13 @@ export default function KaiwaAI() {
           {!isFreeChat && <p className="font-semibold text-sm">{scenario}</p>}
         </div>
         <div className="flex gap-2">
+          <button
+            className={clsx("btn-secondary text-xs px-2", autoTts ? "text-blue-600" : "text-ink-soft")}
+            onClick={() => setAutoTts(!autoTts)}
+            title="Auto Suara"
+          >
+            {autoTts ? <Volume2 size={14} /> : <VolumeX size={14} />}
+          </button>
           {!isFreeChat && (
             <button className="btn-secondary text-xs" onClick={endAndScore} disabled={scoring}>
               <Award size={14} /> {scoring ? 'Menilai…' : 'Selesai & Nilai'}
@@ -201,7 +222,7 @@ export default function KaiwaAI() {
       </div>
 
       {score && (
-        <div className="card p-4 mb-3 bg-gold-50 border-gold-400">
+        <div className="card p-4 mb-3 bg-gold-50 border-gold-400 animate-in zoom-in-95">
           <p className="text-sm font-bold text-gold-600">Skor: {score.score}/100</p>
           <p className="text-xs text-ink-soft mt-1">{score.feedback}</p>
         </div>
@@ -214,25 +235,35 @@ export default function KaiwaAI() {
           </p>
         )}
         {messages.map((m, i) => (
-          <div key={i} className={clsx('max-w-[80%] px-4 py-2.5 rounded-xl2 text-sm', m.role === 'user' ? 'ml-auto bg-blue-500 text-white' : 'bg-surface border border-line')}>
-            <p className="whitespace-pre-line">{m.text}</p>
+          <div key={i} className={clsx('relative max-w-[85%] px-4 py-2.5 rounded-xl2 text-sm group', m.role === 'user' ? 'ml-auto bg-blue-500 text-white shadow-sm' : 'bg-surface border border-line')}>
+            <p className="whitespace-pre-line leading-relaxed">{m.text}</p>
+            {m.role === 'assistant' && (
+              <button
+                onClick={() => speak(m.text)}
+                className="absolute -right-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition text-ink-soft hover:text-blue-500 p-1.5"
+              >
+                <Volume2 size={16} />
+              </button>
+            )}
           </div>
         ))}
         {correction && (
-          <p className="text-xs text-hanko px-1">💡 Koreksi: {correction}</p>
+          <div className="bg-hanko/5 border border-hanko/10 p-2.5 rounded-xl text-[11px] text-hanko leading-relaxed">
+            <span className="font-bold">💡 SENSEI FEEDBACK:</span> {correction}
+          </div>
         )}
-        {sending && <div className="max-w-[60%] px-4 py-2.5 rounded-xl2 text-sm bg-surface border border-line text-ink-soft">…</div>}
-        {error && <p className="text-xs text-hanko px-1">{error}</p>}
+        {sending && <div className="max-w-[60%] px-4 py-2.5 rounded-xl2 text-sm bg-surface border border-line text-ink-soft animate-pulse">…</div>}
+        {error && <p className="text-xs text-hanko px-1 font-semibold">{error}</p>}
         <div ref={bottomRef} />
       </div>
 
       {isFreeChat && (
-        <div className="flex gap-2 overflow-x-auto pb-2 pt-2">
+        <div className="flex gap-2 overflow-x-auto pb-2 pt-2 scrollbar-none">
           {QUICK_ACTIONS.map((qa) => (
             <button
               key={qa.label}
               onClick={() => setInput(qa.prefix)}
-              className="text-xs font-semibold whitespace-nowrap bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full"
+              className="text-xs font-semibold whitespace-nowrap bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full hover:bg-blue-100 transition"
             >
               {qa.label}
             </button>
@@ -242,13 +273,13 @@ export default function KaiwaAI() {
 
       <div className="flex gap-2 pt-2">
         <input
-          className="input"
+          className="input shadow-sm"
           placeholder={isFreeChat ? 'Tulis pertanyaanmu…' : '日本語で話してみましょう…'}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && send()}
         />
-        <button className="btn-primary px-4" onClick={() => send()} disabled={sending || !input.trim()}>
+        <button className="btn-primary px-4 shadow-sm" onClick={() => send()} disabled={sending || !input.trim()}>
           <Send size={16} />
         </button>
       </div>

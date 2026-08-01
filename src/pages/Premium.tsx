@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Crown, Check, Clock } from 'lucide-react'
+import { Crown, Check, Clock, Tag } from 'lucide-react'
+import clsx from 'clsx'
 import { useAuth } from '../contexts/AuthContext'
 import { premiumPackageCollection, premiumOrderCollection, getSiteSettings } from '../services/db'
+import { redeemCoupon } from '../services/coupons'
 import type { PremiumPackage, SiteSettings, PremiumOrder } from '../types/content'
 import { PaymentModal } from '../components/content/PaymentModal'
 
@@ -15,11 +17,15 @@ const FALLBACK_PERKS = [
 ]
 
 export default function Premium() {
-  const { user } = useAuth()
+  const { user, refreshProfile } = useAuth()
   const [packages, setPackages] = useState<PremiumPackage[]>([])
   const [settings, setSettings] = useState<SiteSettings | null>(null)
   const [payingPackage, setPayingPackage] = useState<PremiumPackage | null>(null)
   const [pendingOrder, setPendingOrder] = useState<PremiumOrder | null>(null)
+
+  const [couponCode, setCouponCode] = useState('')
+  const [redeeming, setRedeeming] = useState(false)
+  const [couponMsg, setCouponMsg] = useState<{ text: string, type: 'success' | 'error' } | null>(null)
 
   function loadOrders() {
     if (!user) return
@@ -35,13 +41,57 @@ export default function Premium() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
+  async function handleRedeem() {
+    if (!user || !couponCode.trim() || redeeming) return
+    setRedeeming(true)
+    setCouponMsg(null)
+    try {
+      await redeemCoupon(couponCode, user.uid)
+      setCouponMsg({ text: 'Selamat! Kupon berhasil ditukarkan. Akun Anda sekarang Premium.', type: 'success' })
+      await refreshProfile()
+    } catch (err) {
+      setCouponMsg({ text: err instanceof Error ? err.message : 'Gagal menukarkan kupon.', type: 'error' })
+    } finally {
+      setRedeeming(false)
+    }
+  }
+
   return (
-    <div className="max-w-2xl mx-auto space-y-5">
+    <div className="max-w-2xl mx-auto space-y-5 pb-10">
       <div className="card p-8 text-center bg-gradient-to-br from-hanko to-hanko-dark text-white border-none">
         <Crown className="mx-auto mb-2" size={32} />
         <h1 className="text-xl font-bold">NihonGoPlus Premium</h1>
         <p className="text-sm text-white/85 mt-1">Semua yang kamu butuhkan untuk mencapai kefasihan, lebih cepat.</p>
       </div>
+
+      {/* Coupon Section */}
+      {user && !user.isPremium && (
+        <div className="card p-5 border-blue-200 bg-blue-50/30">
+          <h3 className="text-sm font-bold text-ink mb-3 flex items-center gap-2">
+            <Tag size={16} className="text-blue-600" /> Punya kode kupon?
+          </h3>
+          <div className="flex gap-2">
+            <input
+              className="input uppercase font-mono"
+              placeholder="MASUKKAN KODE"
+              value={couponCode}
+              onChange={e => setCouponCode(e.target.value)}
+            />
+            <button
+              className="btn-primary px-6"
+              onClick={handleRedeem}
+              disabled={redeeming || !couponCode.trim()}
+            >
+              {redeeming ? 'Proses…' : 'Tukarkan'}
+            </button>
+          </div>
+          {couponMsg && (
+            <p className={clsx("text-xs font-semibold mt-2", couponMsg.type === 'success' ? 'text-mint-600' : 'text-hanko')}>
+              {couponMsg.text}
+            </p>
+          )}
+        </div>
+      )}
 
       {packages.length > 0 ? (
         <div className="grid sm:grid-cols-3 gap-3">
@@ -86,8 +136,12 @@ export default function Premium() {
           </div>
         </div>
       ) : user.isPremium ? (
-        <div className="card p-5 text-center text-mint-600 font-semibold text-sm">
-          Kamu sudah Premium. ありがとう！
+        <div className="card p-6 text-center bg-mint-50 border-mint-200">
+          <div className="w-12 h-12 bg-mint-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-mint">
+            <Check className="text-white" size={24} />
+          </div>
+          <p className="text-mint-700 font-bold">Status Premium Aktif</p>
+          <p className="text-xs text-mint-600 mt-1 italic">Terima kasih telah mendukung kami!</p>
         </div>
       ) : pendingOrder ? (
         <div className="card p-5 text-center flex flex-col items-center gap-2">

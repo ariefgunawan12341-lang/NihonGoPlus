@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Crown, ShieldCheck, Search } from 'lucide-react'
+import { Crown, ShieldCheck, Search, Ban } from 'lucide-react'
 import { listAllUsersAdmin, setUserAdminFlags } from '../../services/db'
 import { logAdminActivity } from '../../services/adminActivityLog'
 import { useAuth } from '../../contexts/AuthContext'
@@ -21,13 +21,18 @@ export default function AdminUsers() {
 
   useEffect(load, [])
 
-  async function toggle(target: UserProfile, field: 'isAdmin' | 'isPremium', value: boolean) {
+  async function toggle(target: UserProfile, field: 'isAdmin' | 'isPremium' | 'isSuspended', value: boolean) {
     setUsers((us) => us.map((u) => (u.uid === target.uid ? { ...u, [field]: value } : u)))
     await setUserAdminFlags(target.uid, { [field]: value })
     if (currentAdmin) {
+      let action = ''
+      if (field === 'isAdmin') action = value ? 'grant_admin' : 'revoke_admin'
+      else if (field === 'isPremium') action = value ? 'upgrade_premium' : 'downgrade_premium'
+      else if (field === 'isSuspended') action = value ? 'suspend_user' : 'unsuspend_user'
+
       await logAdminActivity(
         currentAdmin,
-        field === 'isAdmin' ? (value ? 'grant_admin' : 'revoke_admin') : value ? 'upgrade_premium' : 'downgrade_premium',
+        action,
         'users',
         target.uid,
         { targetEmail: target.email }
@@ -61,11 +66,12 @@ export default function AdminUsers() {
                 <th className="px-4 py-3 font-medium">Role</th>
                 <th className="px-4 py-3 font-medium text-center">Admin</th>
                 <th className="px-4 py-3 font-medium text-center">Premium</th>
+                <th className="px-4 py-3 font-medium text-center">Suspend</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((u) => (
-                <tr key={u.uid} className="border-b border-line last:border-0">
+                <tr key={u.uid} className={`border-b border-line last:border-0 ${u.isSuspended ? 'opacity-50 grayscale' : ''}`}>
                   <td className="px-4 py-3 font-medium">{u.displayName}</td>
                   <td className="px-4 py-3 text-ink-soft">{u.email}</td>
                   <td className="px-4 py-3">Lv. {u.level}</td>
@@ -88,11 +94,20 @@ export default function AdminUsers() {
                       <Crown size={18} className="inline" />
                     </button>
                   </td>
+                  <td className="px-4 py-3 text-center">
+                    <button
+                      onClick={() => toggle(u, 'isSuspended', !u.isSuspended)}
+                      className={u.isSuspended ? 'text-red-600' : 'text-ink-soft/40 hover:text-red-600'}
+                      title={u.isSuspended ? 'Unsuspend user' : 'Suspend user'}
+                    >
+                      <Ban size={18} className="inline" />
+                    </button>
+                  </td>
                 </tr>
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-ink-soft">No users found.</td>
+                  <td colSpan={7} className="px-4 py-8 text-center text-ink-soft">No users found.</td>
                 </tr>
               )}
             </tbody>

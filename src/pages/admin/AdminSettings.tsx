@@ -14,8 +14,8 @@ export default function AdminSettings() {
     getSiteSettings().then(setForm)
   }, [])
 
-  async function handleUpload(field: 'logoUrl' | 'faviconUrl' | 'bannerUrl' | 'qrisImageUrl', kind: 'logo' | 'favicon' | 'banner' | 'qris', file: File) {
-    setUploading(kind)
+  async function handleUpload(field: 'logoUrl' | 'faviconUrl' | 'bannerUrl' | 'qrisImageUrl' | 'heroImageUrl', kind: 'logo' | 'favicon' | 'banner' | 'qris' | 'hero', file: File) {
+    setUploading(kind as any)
     try {
       const url = await uploadMediaFile(file, 'branding')
       setForm((f) => (f ? { ...f, [field]: url } : f))
@@ -37,7 +37,7 @@ export default function AdminSettings() {
   if (!form) return <p className="text-sm text-ink-soft">Memuat…</p>
 
   return (
-    <div className="max-w-2xl space-y-5">
+    <div className="max-w-2xl space-y-5 pb-10">
       <div className="card p-5 space-y-3">
         <h3 className="font-semibold text-sm">Identitas Situs</h3>
         <input className="input" placeholder="Nama Website" value={form.siteName} onChange={(e) => setForm({ ...form, siteName: e.target.value })} />
@@ -47,12 +47,34 @@ export default function AdminSettings() {
             return (
               <div key={field}>
                 <p className="text-xs font-semibold text-ink-soft mb-1 capitalize">{kind}</p>
-                {form[field] && <img src={form[field]} alt="" className="h-14 mb-1 rounded" />}
-                <input type="file" accept="image/*" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(field, kind, f) }} />
+                {form[field] && <img src={form[field]} alt="" className="h-14 mb-1 rounded border border-line" />}
+                <input type="file" accept="image/*" className="text-[10px]" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(field, kind, f) }} />
                 {uploading === kind && <p className="text-[11px] text-blue-600">Mengunggah…</p>}
               </div>
             )
           })}
+        </div>
+      </div>
+
+      <div className="card p-5 space-y-4">
+        <h3 className="font-semibold text-sm border-b border-line pb-2">Hero Section (Beranda)</h3>
+        <div className="space-y-3">
+          <input className="input" placeholder="Hero Heading" value={form.heroHeading ?? ''} onChange={(e) => setForm({ ...form, heroHeading: e.target.value })} />
+          <textarea className="input" rows={2} placeholder="Hero Subheading" value={form.heroSubheading ?? ''} onChange={(e) => setForm({ ...form, heroSubheading: e.target.value })} />
+          <input className="input" placeholder="CTA Label (e.g. Mulai Belajar)" value={form.heroCtaLabel ?? ''} onChange={(e) => setForm({ ...form, heroCtaLabel: e.target.value })} />
+          <div>
+            <p className="text-xs font-semibold text-ink-soft mb-1">Hero Image</p>
+            {form.heroImageUrl && <img src={form.heroImageUrl} alt="" className="h-24 mb-2 rounded border border-line" />}
+            <input type="file" accept="image/*" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload('heroImageUrl', 'hero', f) }} />
+          </div>
+          <div className="grid grid-cols-2 gap-4 pt-2">
+            <label className="flex items-center gap-2 text-xs font-medium cursor-pointer">
+              <input type="checkbox" checked={form.showHeroSection ?? true} onChange={e => setForm({...form, showHeroSection: e.target.checked})} /> Tampilkan Hero
+            </label>
+            <label className="flex items-center gap-2 text-xs font-medium cursor-pointer">
+              <input type="checkbox" checked={form.showQuickAccessSection ?? true} onChange={e => setForm({...form, showQuickAccessSection: e.target.checked})} /> Tampilkan Akses Cepat
+            </label>
+          </div>
         </div>
       </div>
 
@@ -69,6 +91,20 @@ export default function AdminSettings() {
         </div>
       </div>
 
+      <div className="card p-5 space-y-3 text-ink-soft">
+        <h3 className="font-semibold text-sm text-ink">Tema & Gaya</h3>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-[10px] font-bold uppercase">Warna Utama (Hex)</label>
+            <input className="input h-10 px-1" type="color" value={form.themePrimaryColor ?? '#5B8DEF'} onChange={e => setForm({...form, themePrimaryColor: e.target.value})} />
+          </div>
+          <div>
+            <label className="text-[10px] font-bold uppercase">Border Radius (px)</label>
+            <input className="input" type="number" value={form.themeBorderRadius ?? '12'} onChange={e => setForm({...form, themeBorderRadius: e.target.value})} />
+          </div>
+        </div>
+      </div>
+
       <div className="card p-5 space-y-3">
         <h3 className="font-semibold text-sm">SEO Default</h3>
         <input className="input" placeholder="SEO Title default" value={form.seoDefaultTitle ?? ''} onChange={(e) => setForm({ ...form, seoDefaultTitle: e.target.value })} />
@@ -76,24 +112,9 @@ export default function AdminSettings() {
       </div>
 
       <div className="card p-5 space-y-3">
-        <h3 className="font-semibold text-sm">SMTP Email</h3>
-        <p className="text-xs text-ink-soft">
-          Field ini hanya menyimpan konfigurasi — pengiriman email sungguhan butuh Cloud Function terpisah yang membaca nilai
-          ini secara server-side. Sengaja tidak ada field password di sini; simpan password SMTP sebagai secret di Cloud
-          Functions, bukan di Firestore.
-        </p>
-        <div className="grid grid-cols-2 gap-3">
-          <input className="input" placeholder="SMTP Host" value={form.smtpHost ?? ''} onChange={(e) => setForm({ ...form, smtpHost: e.target.value })} />
-          <input className="input" placeholder="SMTP Port" value={form.smtpPort ?? ''} onChange={(e) => setForm({ ...form, smtpPort: e.target.value })} />
-          <input className="input" placeholder="SMTP Username" value={form.smtpUser ?? ''} onChange={(e) => setForm({ ...form, smtpUser: e.target.value })} />
-        </div>
-      </div>
-
-      <div className="card p-5 space-y-3">
         <h3 className="font-semibold text-sm">Pembayaran Premium (QRIS / DANA)</h3>
         <p className="text-xs text-ink-soft">
-          Verifikasi pembayaran dilakukan manual oleh admin (tidak ada payment gateway terhubung) — user mengunggah bukti
-          transfer, admin mengecek dan mengonfirmasi dari halaman <b>Konfirmasi Pembayaran</b>.
+          Verifikasi pembayaran dilakukan manual oleh admin.
         </p>
         <div>
           <p className="text-xs font-semibold text-ink-soft mb-1">Gambar QRIS</p>
@@ -105,10 +126,10 @@ export default function AdminSettings() {
           <input className="input" placeholder="Nomor DANA" value={form.danaNumber ?? ''} onChange={(e) => setForm({ ...form, danaNumber: e.target.value })} />
           <input className="input" placeholder="Nama penerima DANA" value={form.danaName ?? ''} onChange={(e) => setForm({ ...form, danaName: e.target.value })} />
         </div>
-        <textarea className="input" rows={3} placeholder="Instruksi pembayaran (ditampilkan ke user)" value={form.paymentInstructions ?? ''} onChange={(e) => setForm({ ...form, paymentInstructions: e.target.value })} />
+        <textarea className="input" rows={3} placeholder="Instruksi pembayaran" value={form.paymentInstructions ?? ''} onChange={(e) => setForm({ ...form, paymentInstructions: e.target.value })} />
       </div>
 
-      <button className="btn-primary w-full" onClick={save}>{saved ? 'Tersimpan!' : 'Simpan Pengaturan'}</button>
+      <button className="btn-primary w-full shadow-lg py-4" onClick={save}>{saved ? 'Tersimpan!' : 'Simpan Semua Pengaturan'}</button>
     </div>
   )
 }

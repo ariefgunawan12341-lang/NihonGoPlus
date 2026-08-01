@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Volume2 } from 'lucide-react'
 import clsx from 'clsx'
 import type { JLPTLevel } from '../../types'
 import type { ContentItem, ContentKind } from '../../types/content'
@@ -8,14 +7,8 @@ import { contentCollection } from '../../services/db'
 import { useAuth } from '../../contexts/AuthContext'
 import { checkAccess } from '../../utils/access'
 import { ItemAccessLock } from '../ui/ItemAccessLock'
-
-function speak(text: string) {
-  if ('speechSynthesis' in window) {
-    const utter = new SpeechSynthesisUtterance(text)
-    utter.lang = 'ja-JP'
-    window.speechSynthesis.speak(utter)
-  }
-}
+import { StudyItemActions } from '../learning/StudyItemActions'
+import { logActivity } from '../../utils/gamification'
 
 const LEVELS: JLPTLevel[] = ['N5', 'N4', 'N3', 'N2', 'N1']
 
@@ -34,6 +27,7 @@ export function ContentList({
   emptyLabel: string
   previewLimit?: number
 }) {
+  const { user, updateProfile } = useAuth()
   const [level, setLevel] = useState<JLPTLevel>(fixedLevel ?? 'N5')
   const [items, setItems] = useState<ContentItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -42,8 +36,6 @@ export function ContentList({
 
   useEffect(() => {
     setLoading(true)
-    // Server-side filtered by kind (+ level, + category when relevant) so this
-    // scales to thousands of entries without ever pulling the whole collection.
     contentCollection
       .listFiltered(showLevelPicker || fixedLevel ? { kind, level: effectiveLevel } : { kind, category })
       .then((all) => {
@@ -52,7 +44,15 @@ export function ContentList({
       })
   }, [kind, effectiveLevel, category, showLevelPicker, fixedLevel])
 
-  const { user } = useAuth()
+  async function handleItemClick(item: ContentItem) {
+    if (!user) return
+    await logActivity(user.uid, 'quizzesCompleted', 0, {
+      type: 'lesson',
+      title: `Mempelajari ${kind}: ${item.title}`,
+      xpGained: 2
+    })
+    await updateProfile({ xp: user.xp + 2 })
+  }
 
   return (
     <div className="space-y-4">
@@ -74,7 +74,9 @@ export function ContentList({
       )}
 
       {loading ? (
-        <p className="text-sm text-ink-soft">Loading…</p>
+        <div className="space-y-3">
+          {[1, 2, 3].map(i => <div key={i} className="h-24 w-full bg-line/50 rounded-xl animate-pulse" />)}
+        </div>
       ) : items.length === 0 ? (
         <div className="card p-8 text-center text-ink-soft text-sm">{emptyLabel}</div>
       ) : (
@@ -86,21 +88,24 @@ export function ContentList({
                 return <ItemAccessLock key={item.id} result={access} />
               }
               return (
-              <div key={item.id} className="card p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="flex items-baseline gap-2 flex-wrap">
-                      <span className="font-jp text-xl">{item.title}</span>
-                      {item.reading && <span className="text-sm text-ink-soft">{item.reading}</span>}
-                    </div>
-                    <p className="text-sm font-semibold text-blue-600 mt-0.5">{item.meaning}</p>
-                    {item.example && <p className="text-xs text-ink-soft mt-1">{item.example}</p>}
-                    {item.exampleMeaning && <p className="text-xs text-ink-soft/70">{item.exampleMeaning}</p>}
+              <div
+                key={item.id}
+                className="card p-4 flex items-start justify-between gap-3 hover:border-blue-200 transition-colors cursor-pointer group"
+                onClick={() => handleItemClick(item)}
+              >
+                <div className="min-w-0">
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    <span className="font-jp text-xl font-bold text-ink">{item.title}</span>
+                    {item.reading && <span className="text-sm text-ink-soft font-jp">{item.reading}</span>}
                   </div>
-                  <button onClick={() => speak(item.title)} className="text-ink-soft hover:text-blue-500 shrink-0">
-                    <Volume2 size={18} />
-                  </button>
+                  <p className="text-sm font-bold text-blue-600 mt-0.5">{item.meaning}</p>
+                  {item.example && <p className="text-[11px] text-ink-soft mt-1 italic truncate">{item.example}</p>}
                 </div>
+                <StudyItemActions
+                  itemId={item.id}
+                  itemType={kind === 'kanji' ? 'kanji' : kind === 'grammar' ? 'grammar' : 'vocab'}
+                  audioText={item.reading || item.title}
+                />
               </div>
               )
             })}

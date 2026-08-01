@@ -1,50 +1,45 @@
 import { useEffect, useState } from 'react'
-import { Heart, Volume2 } from 'lucide-react'
 import clsx from 'clsx'
 import type { JLPTLevel, VocabWord } from '../types'
 import { vocabCollection } from '../services/db'
 import { useAuth } from '../contexts/AuthContext'
 import { checkAccess } from '../utils/access'
 import { ItemAccessLock } from '../components/ui/ItemAccessLock'
+import { StudyItemActions } from '../components/learning/StudyItemActions'
+import { logActivity } from '../utils/gamification'
 
 const LEVELS: JLPTLevel[] = ['N5', 'N4', 'N3', 'N2', 'N1']
 
-function speak(text: string) {
-  if ('speechSynthesis' in window) {
-    const utter = new SpeechSynthesisUtterance(text)
-    utter.lang = 'ja-JP'
-    window.speechSynthesis.speak(utter)
-  }
-}
-
 export default function Vocabulary({ initialLevel }: { initialLevel?: JLPTLevel }) {
-  const { user } = useAuth()
+  const { user, updateProfile } = useAuth()
   const [level, setLevel] = useState<JLPTLevel>(initialLevel ?? 'N5')
   const [words, setWords] = useState<VocabWord[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     setLoading(true)
-    // Server-side filtered query — only this level's words are ever fetched,
-    // so this stays fast even once a level holds thousands of entries.
     vocabCollection.listFiltered({ level }).then((words) => {
       setWords(words)
       setLoading(false)
     })
   }, [level])
 
-  async function toggleFavorite(word: VocabWord) {
-    const updated = { ...word, favorite: !word.favorite }
-    setWords((ws) => ws.map((w) => (w.id === word.id ? updated : w)))
-    await vocabCollection.update(word.id, { favorite: updated.favorite })
+  async function handleWordClick(w: VocabWord) {
+    if (!user) return
+    await logActivity(user.uid, 'quizzesCompleted', 0, {
+      type: 'lesson',
+      title: `Mempelajari: ${w.kanji || w.kana}`,
+      xpGained: 2
+    })
+    await updateProfile({ xp: user.xp + 2 })
   }
 
   return (
     <div className="space-y-5">
       {!initialLevel && (
         <div>
-          <h1 className="text-xl font-bold">Kotoba — Vocabulary</h1>
-          <p className="text-sm text-ink-soft">Browse words by JLPT level.</p>
+          <h1 className="text-xl font-bold">Kotoba — Kosakata</h1>
+          <p className="text-sm text-ink-soft">Daftar kata berdasarkan level JLPT.</p>
         </div>
       )}
 
@@ -66,10 +61,12 @@ export default function Vocabulary({ initialLevel }: { initialLevel?: JLPTLevel 
       )}
 
       {loading ? (
-        <p className="text-sm text-ink-soft">Loading…</p>
+        <div className="space-y-3">
+          {[1, 2, 3, 4].map(i => <div key={i} className="h-24 w-full bg-line/50 rounded-xl animate-pulse" />)}
+        </div>
       ) : words.length === 0 ? (
         <div className="card p-8 text-center text-ink-soft text-sm">
-          No {level} vocabulary yet — add some from the Admin Panel.
+          Belum ada kosakata {level}.
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 gap-3">
@@ -79,24 +76,25 @@ export default function Vocabulary({ initialLevel }: { initialLevel?: JLPTLevel 
               return <ItemAccessLock key={w.id} result={access} />
             }
             return (
-            <div key={w.id} className="card p-4 flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="flex items-baseline gap-2 flex-wrap">
-                  {w.kanji && <span className="font-jp text-lg">{w.kanji}</span>}
-                  <span className="font-jp text-ink-soft">{w.kana}</span>
+              <div
+                key={w.id}
+                className="card p-4 flex items-start justify-between gap-3 hover:border-blue-200 transition-colors group cursor-pointer"
+                onClick={() => handleWordClick(w)}
+              >
+                <div className="min-w-0">
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    {w.kanji && <span className="font-jp text-lg font-bold text-ink">{w.kanji}</span>}
+                    <span className="font-jp text-ink-soft text-sm">{w.kana}</span>
+                  </div>
+                  <p className="text-sm font-bold text-blue-600 mb-1">{w.meaning}</p>
+                  <p className="text-[11px] text-ink-soft italic truncate">{w.example}</p>
                 </div>
-                <p className="text-sm font-semibold text-blue-600">{w.meaning}</p>
-                <p className="text-xs text-ink-soft mt-1 truncate">{w.example}</p>
+                <StudyItemActions
+                  itemId={w.id}
+                  itemType="vocab"
+                  audioText={w.kana}
+                />
               </div>
-              <div className="flex flex-col items-center gap-2 shrink-0">
-                <button onClick={() => speak(w.kana)} className="text-ink-soft hover:text-blue-500">
-                  <Volume2 size={18} />
-                </button>
-                <button onClick={() => toggleFavorite(w)} className={w.favorite ? 'text-hanko' : 'text-ink-soft hover:text-hanko'}>
-                  <Heart size={18} fill={w.favorite ? 'currentColor' : 'none'} />
-                </button>
-              </div>
-            </div>
             )
           })}
         </div>

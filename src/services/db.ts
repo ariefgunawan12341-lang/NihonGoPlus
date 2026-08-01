@@ -2,8 +2,8 @@ import { USE_SUPABASE } from '../supabase/client'
 import { LocalCollection, seedIfEmpty } from './localCollection'
 import { SupabaseCollection } from './supabaseCollection'
 import { UserScopedTable } from './userScopedCollection'
-import type { VocabWord, ExamQuestion, SrsCardState, ExamAttempt, UserProfile, KaiwaSession, DownloadModule, UserProgress } from '../types'
-import type { ContentItem, Article, Comment, Announcement, SiteSettings, PremiumPackage, PageView, PremiumOrder } from '../types/content'
+import type { VocabWord, ExamQuestion, SrsCardState, ExamAttempt, UserProfile, KaiwaSession, DownloadModule, UserProgress, Bookmark, UserNote, UserNotification, UserAchievement } from '../types'
+import type { ContentItem, Article, Comment, Announcement, SiteSettings, PremiumPackage, PageView, PremiumOrder, Feedback, Coupon } from '../types/content'
 import { vocabN5 } from '../data/vocabN5'
 import { vocabN4 } from '../data/vocabN4'
 import { examN5 } from '../data/examN5'
@@ -27,6 +27,8 @@ export const announcementCollection = makeCollection<Announcement>('announcement
 export const premiumPackageCollection = makeCollection<PremiumPackage>('premium_packages')
 export const premiumOrderCollection = makeCollection<PremiumOrder>('premium_orders')
 export const pageViewCollection = makeCollection<PageView>('pageviews')
+export const feedbackCollection = makeCollection<Feedback>('feedback')
+export const couponCollection = makeCollection<Coupon>('coupons')
 
 const SETTINGS_DOC_ID = 'site'
 const settingsCol = makeCollection<SiteSettings>('settings')
@@ -74,6 +76,22 @@ export function userExamAttemptCollection(uid: string) {
 
 export function userKaiwaCollection(uid: string) {
   return makeUserCollection<KaiwaSession>('kaiwa_sessions', uid)
+}
+
+export function userBookmarkCollection(uid: string) {
+  return makeUserCollection<Bookmark>('bookmarks', uid)
+}
+
+export function userNoteCollection(uid: string) {
+  return makeUserCollection<UserNote>('user_notes', uid)
+}
+
+export function userNotificationCollection(uid: string) {
+  return makeUserCollection<UserNotification>('notifications', uid)
+}
+
+export function userAchievementCollection(uid: string) {
+  return makeUserCollection<UserAchievement>('user_achievements', uid)
 }
 
 // Users are handled a little differently: in local mode they live inside the

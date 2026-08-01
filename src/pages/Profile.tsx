@@ -1,19 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { LogOut, User as UserIcon, Camera } from 'lucide-react'
+import { LogOut, User as UserIcon, Camera, Trash2, Globe, Target, AlignLeft } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { uploadProfilePhoto } from '../services/storage'
 import { getOrCreateProgress, ACHIEVEMENTS } from '../utils/gamification'
-import type { UserProgress } from '../types'
+import type { UserProgress, JLPTLevel } from '../types'
 
 export default function Profile() {
-  const { user, updateProfile, signOutUser } = useAuth()
+  const { user, updateProfile, signOutUser, deleteAccount } = useAuth()
   const navigate = useNavigate()
+
   const [name, setName] = useState(user?.displayName ?? '')
+  const [bio, setBio] = useState(user?.bio ?? '')
+  const [country, setCountry] = useState(user?.country ?? '')
+  const [targetLevel, setTargetLevel] = useState<JLPTLevel>(user?.targetLevel ?? 'N5')
+
   const [saved, setSaved] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [photoError, setPhotoError] = useState<string | null>(null)
   const [progress, setProgress] = useState<UserProgress | null>(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -23,9 +29,21 @@ export default function Profile() {
   if (!user) return null
 
   async function save() {
-    await updateProfile({ displayName: name })
+    await updateProfile({
+      displayName: name,
+      bio,
+      country,
+      targetLevel
+    })
     setSaved(true)
     setTimeout(() => setSaved(false), 1500)
+  }
+
+  async function handleDeleteAccount() {
+    if (window.confirm('Apakah Anda yakin ingin menghapus akun? Semua data progress Anda akan hilang selamanya.')) {
+      await deleteAccount()
+      navigate('/login')
+    }
   }
 
   async function handlePhotoSelect(e: React.ChangeEvent<HTMLInputElement>) {
@@ -46,7 +64,7 @@ export default function Profile() {
   const unlocked = progress ? ACHIEVEMENTS.filter((a) => a.isUnlocked(user, progress)) : []
 
   return (
-    <div className="max-w-lg space-y-5">
+    <div className="max-w-lg space-y-5 pb-10">
       <div className="card p-6 flex items-center gap-4">
         <button
           onClick={() => fileInputRef.current?.click()}
@@ -83,11 +101,56 @@ export default function Profile() {
         ))}
       </div>
 
-      <div className="card p-5 space-y-3">
-        <h3 className="font-semibold text-sm">Display name</h3>
-        <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
-        <button className="btn-primary" onClick={save}>
-          {saved ? 'Saved!' : 'Save changes'}
+      <div className="card p-5 space-y-4">
+        <div className="space-y-2">
+          <label className="text-xs font-bold text-ink-soft uppercase flex items-center gap-1.5">
+            <UserIcon size={12} /> Display name
+          </label>
+          <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-xs font-bold text-ink-soft uppercase flex items-center gap-1.5">
+            <AlignLeft size={12} /> Bio
+          </label>
+          <textarea
+            className="input min-h-[80px] py-2"
+            placeholder="Tentang saya..."
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-ink-soft uppercase flex items-center gap-1.5">
+              <Globe size={12} /> Negara
+            </label>
+            <input
+              className="input"
+              placeholder="Indonesia"
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-ink-soft uppercase flex items-center gap-1.5">
+              <Target size={12} /> Target JLPT
+            </label>
+            <select
+              className="input"
+              value={targetLevel}
+              onChange={(e) => setTargetLevel(e.target.value as JLPTLevel)}
+            >
+              {['N5', 'N4', 'N3', 'N2', 'N1'].map(lvl => (
+                <option key={lvl} value={lvl}>{lvl}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <button className="btn-primary w-full" onClick={save}>
+          {saved ? 'Berhasil Disimpan!' : 'Simpan Perubahan'}
         </button>
       </div>
 
@@ -108,15 +171,24 @@ export default function Profile() {
         </div>
       </div>
 
-      <button
-        className="btn-secondary w-full text-hanko bg-hanko/10 hover:bg-hanko/20"
-        onClick={async () => {
-          await signOutUser()
-          navigate('/login')
-        }}
-      >
-        <LogOut size={16} /> Sign out
-      </button>
+      <div className="pt-2 space-y-3">
+        <button
+          className="btn-secondary w-full text-hanko bg-hanko/10 hover:bg-hanko/20 border-none"
+          onClick={async () => {
+            await signOutUser()
+            navigate('/login')
+          }}
+        >
+          <LogOut size={16} /> Sign out
+        </button>
+
+        <button
+          className="text-xs text-ink-soft hover:text-hanko transition w-full flex items-center justify-center gap-1"
+          onClick={handleDeleteAccount}
+        >
+          <Trash2 size={12} /> Hapus akun permanen
+        </button>
+      </div>
     </div>
   )
 }

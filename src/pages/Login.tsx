@@ -7,6 +7,8 @@ function friendlyAuthError(message: string): string {
   if (m.includes('invalid login credentials') || m.includes('invalid-credential')) return 'Email atau password salah.'
   if (m.includes('email not confirmed')) return 'Email belum diverifikasi — cek kotak masuk untuk tautan konfirmasi.'
   if (m.includes('already registered') || m.includes('already-in-use')) return 'Email ini sudah terdaftar — coba masuk saja.'
+  if (m.includes('provider is not enabled')) return 'Login Google belum diaktifkan. Silakan hubungi admin.'
+  if (m.includes('network error')) return 'Koneksi internet bermasalah.'
   return message
 }
 

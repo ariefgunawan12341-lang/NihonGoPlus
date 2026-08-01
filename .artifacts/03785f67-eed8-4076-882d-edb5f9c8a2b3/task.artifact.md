@@ -1,0 +1,4 @@
+- [ ] Update `AuthContext.tsx` with refined Google Login logic
+- [ ] Update `Login.tsx` with better error handling
+- [ ] Update `Signup.tsx` with better error handling
+- [ ] Verify build and project stability

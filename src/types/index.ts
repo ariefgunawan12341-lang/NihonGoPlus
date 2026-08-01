@@ -17,10 +17,14 @@ export interface UserProfile {
   lastStudyDate: string | null // ISO date (yyyy-mm-dd)
   isPremium: boolean
   isAdmin: boolean
+  isSuspended?: boolean
   role?: UserRole
   premiumPlan?: 'monthly' | 'yearly' | null
   premiumExpire?: string | null // ISO date
   language?: 'en' | 'id' | 'ja'
+  bio?: string
+  country?: string
+  targetLevel?: JLPTLevel
 }
 
 export interface DownloadModule {
@@ -41,10 +45,30 @@ export interface DailyActivity {
   examsCompleted: number
 }
 
+export interface ActivityLogEntry {
+  id: string
+  type: 'lesson' | 'quiz' | 'exam' | 'flashcard' | 'achievement'
+  title: string
+  timestamp: number
+  xpGained: number
+}
+
+export interface DailyChallenge {
+  id: string
+  title: string
+  target: number
+  current: number
+  type: 'vocab' | 'kanji' | 'grammar' | 'exam'
+  xpReward: number
+  completed: boolean
+}
+
 export interface UserProgress {
   id: string // always 'progress' — one doc per user
   completedLessons: number
   activityLog: DailyActivity[]
+  recentActivities: ActivityLogEntry[]
+  dailyChallenge?: DailyChallenge
   unlockedAchievements: string[]
 }
 
@@ -119,4 +143,34 @@ export interface KaiwaSession {
   scenario: string
   createdAt: number
   messages: KaiwaMessage[]
+}
+
+export interface Bookmark {
+  id: string
+  itemId: string
+  itemType: 'vocab' | 'kanji' | 'grammar' | 'article'
+  createdAt: number
+}
+
+export interface UserNote {
+  id: string
+  itemId: string
+  note: string
+  updatedAt: number
+}
+
+export interface UserNotification {
+  id: string
+  title: string
+  body: string
+  link?: string
+  read: boolean
+  type: 'system' | 'achievement' | 'promotion' | 'reminder'
+  createdAt: number
+}
+
+export interface UserAchievement {
+  id: string
+  achievementId: string
+  unlockedAt: number
 }

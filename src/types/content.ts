@@ -102,6 +102,16 @@ export interface SiteSettings {
   danaNumber?: string
   danaName?: string
   paymentInstructions?: string
+  // Hero Section
+  heroHeading?: string
+  heroSubheading?: string
+  heroCtaLabel?: string
+  heroImageUrl?: string
+  showHeroSection?: boolean
+  showQuickAccessSection?: boolean
+  // Theme
+  themePrimaryColor?: string
+  themeBorderRadius?: string
 }
 
 export type PaymentMethod = 'qris' | 'dana'
@@ -141,4 +151,27 @@ export interface PageView {
   id: string
   path: string
   timestamp: number
+}
+
+export interface Feedback {
+  id: string
+  userId?: string
+  userEmail?: string
+  userName?: string
+  subject: string
+  message: string
+  status: 'unread' | 'read' | 'replied' | 'archived'
+  createdAt: number
+}
+
+export interface Coupon {
+  id: string
+  code: string
+  plan: 'monthly' | 'yearly' | 'lifetime'
+  durationDays: number | null
+  maxUses: number
+  currentUses: number
+  active: boolean
+  createdAt: number
+  expiresAt?: number
 }

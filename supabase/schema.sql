@@ -34,10 +34,14 @@ create table if not exists public.users (
   last_study_date text,
   is_premium boolean not null default false,
   is_admin boolean not null default false,
+  is_suspended boolean not null default false,
   role text not null default 'user' check (role in ('super_admin','admin','editor','moderator','user')),
   premium_plan text,
   premium_expire text,
-  language text default 'en'
+  language text default 'en',
+  bio text,
+  country text,
+  target_level text
 );
 
 alter table public.users enable row level security;
@@ -475,9 +479,92 @@ create table if not exists public.progress (
   user_id uuid not null references auth.users(id) on delete cascade,
   completed_lessons int not null default 0,
   activity_log jsonb not null default '[]',
+  recent_activities jsonb not null default '[]',
+  daily_challenge jsonb,
   unlocked_achievements text[] default '{}',
   primary key (user_id, id)
 );
+
+create table if not exists public.bookmarks (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  item_id text not null,
+  item_type text not null check (item_type in ('vocab','kanji','grammar','article')),
+  created_at bigint not null default (extract(epoch from now()) * 1000)::bigint
+);
+alter table public.bookmarks enable row level security;
+create policy "bookmarks_owner" on public.bookmarks for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+create table if not exists public.user_notes (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  item_id text not null,
+  note text not null,
+  updated_at bigint not null default (extract(epoch from now()) * 1000)::bigint
+);
+alter table public.user_notes enable row level security;
+create policy "user_notes_owner" on public.user_notes for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+create table if not exists public.feedback (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id),
+  user_email text,
+  user_name text,
+  subject text not null,
+  message text not null,
+  status text not null default 'unread' check (status in ('unread','read','replied','archived')),
+  created_at bigint not null default (extract(epoch from now()) * 1000)::bigint
+);
+alter table public.feedback enable row level security;
+create policy "feedback_insert" on public.feedback for insert with check (true);
+create policy "feedback_admin" on public.feedback for all using (public.is_admin());
+
+create table if not exists public.coupons (
+  id text primary key,
+  code text unique not null,
+  plan text not null check (plan in ('monthly','yearly','lifetime')),
+  duration_days int,
+  max_uses int default 1,
+  current_uses int default 0,
+  active boolean default true,
+  created_at bigint not null default (extract(epoch from now()) * 1000)::bigint,
+  expires_at bigint
+);
+alter table public.coupons enable row level security;
+create policy "coupons_select" on public.coupons for select using (active = true);
+create policy "coupons_admin" on public.coupons for all using (public.is_admin());
+
+create table if not exists public.notifications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade,
+  title text not null,
+  body text not null,
+  link text,
+  read boolean default false,
+  type text default 'system' check (type in ('system','achievement','promotion','reminder')),
+  created_at bigint not null default (extract(epoch from now()) * 1000)::bigint
+);
+alter table public.notifications enable row level security;
+create policy "notifications_owner" on public.notifications for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "notifications_admin" on public.notifications for insert with check (public.is_admin());
+
+create table if not exists public.user_achievements (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  achievement_id text not null,
+  unlocked_at bigint not null default (extract(epoch from now()) * 1000)::bigint,
+  unique (user_id, achievement_id)
+);
+alter table public.user_achievements enable row level security;
+create policy "user_achievements_select" on public.user_achievements for select using (true);
+create policy "user_achievements_owner" on public.user_achievements for insert with check (auth.uid() = user_id);
+create policy "user_achievements_admin" on public.user_achievements for all using (public.is_admin());
+
+create index if not exists idx_bookmarks_user_item on public.bookmarks(user_id, item_id);
+create index if not exists idx_user_notes_user_item on public.user_notes(user_id, item_id);
+create index if not exists idx_notifications_user_unread on public.notifications(user_id, read);
+create index if not exists idx_user_achievements_user on public.user_achievements(user_id);
+create index if not exists idx_content_items_level_category on public.content_items(level, category);
 alter table public.progress enable row level security;
 drop policy if exists "progress_owner" on public.progress;
 create policy "progress_owner" on public.progress for all

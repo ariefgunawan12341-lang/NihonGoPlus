@@ -19,7 +19,7 @@ export async function listAllUsersAdmin(): Promise<UserProfile[]> {
 export async function setUserAdminFlags(uid: string, patch: Partial<UserProfile>): Promise<void> {
   if (USE_SUPABASE) {
     if (!supabase) return
-    const { error } = await supabase.from('users').update(toSnakeCase(patch as Record<string, unknown>)).eq('id', uid)
+    const { error } = await supabase.from('users').update(toSnakeCase(patch as Record<string, unknown>)).eq('uid', uid)
     if (error) throw error
     return
   }

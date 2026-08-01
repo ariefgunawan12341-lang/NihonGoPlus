@@ -8,6 +8,8 @@ function friendlyAuthError(message: string): string {
     return 'Email ini sudah terdaftar — coba masuk saja lewat halaman Sign in.'
   }
   if (m.includes('password') && m.includes('6')) return 'Password minimal 6 karakter.'
+  if (m.includes('provider is not enabled')) return 'Login Google belum diaktifkan. Silakan hubungi admin.'
+  if (m.includes('network error')) return 'Koneksi internet bermasalah.'
   return message
 }
 

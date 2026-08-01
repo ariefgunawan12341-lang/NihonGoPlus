@@ -15,10 +15,13 @@ const tabs = [
   { label: 'Artikel', to: '/admin/articles' },
   { label: 'Media', to: '/admin/media' },
   { label: 'Komentar', to: '/admin/comments' },
+  { label: 'Notifikasi', to: '/admin/notifications' },
   { label: 'Pengumuman', to: '/admin/announcements' },
   { label: 'Users', to: '/admin/users' },
   { label: 'Premium', to: '/admin/premium' },
   { label: 'Konfirmasi Pembayaran', to: '/admin/premium-orders' },
+  { label: 'Kupon', to: '/admin/coupons' },
+  { label: 'Feedback', to: '/admin/feedback' },
   { label: 'Settings', to: '/admin/settings' },
   { label: 'Analytics', to: '/admin/analytics' },
   { label: 'Activity Log', to: '/admin/activity-log' }
