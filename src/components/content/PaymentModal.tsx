@@ -52,7 +52,7 @@ export function PaymentModal({
         id: `order-${crypto.randomUUID()}`,
         userUid: user.uid,
         userEmail: user.email,
-        userName: user.displayName,
+        userName: user.fullName,
         packageId: pkg.id,
         packageName: pkg.name,
         price: pkg.price,

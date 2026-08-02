@@ -54,7 +54,7 @@ export default function AdminPremium() {
     load()
   }
 
-  const premiumUsers = users.filter((u) => u.isPremium)
+  const premiumUsers = users.filter((u) => u.premium)
 
   return (
     <div className="space-y-6">
@@ -100,7 +100,7 @@ export default function AdminPremium() {
           <tbody>
             {premiumUsers.map((u) => (
               <tr key={u.uid} className="border-b border-line last:border-0">
-                <td className="px-4 py-3 font-medium">{u.displayName}</td>
+                <td className="px-4 py-3 font-medium">{u.fullName}</td>
                 <td className="px-4 py-3 text-ink-soft">{u.email}</td>
               </tr>
             ))}

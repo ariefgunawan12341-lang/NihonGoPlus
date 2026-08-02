@@ -4,6 +4,7 @@ import { AppLayout } from './components/layout/AppLayout'
 import { RequireAuth, RequireAdmin } from './components/layout/RouteGuards'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { usePageViewLogger } from './hooks/usePageViewLogger'
+import { USE_SUPABASE, IS_SUPABASE_CONFIGURED } from './supabase/client'
 
 const Login = lazy(() => import('./pages/Login'))
 const Signup = lazy(() => import('./pages/Signup'))
@@ -30,6 +31,7 @@ const ArticleDetail = lazy(() => import('./pages/ArticleDetail'))
 const About = lazy(() => import('./pages/About'))
 const Contact = lazy(() => import('./pages/Contact'))
 const Profile = lazy(() => import('./pages/Profile'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Premium = lazy(() => import('./pages/Premium'))
 const Support = lazy(() => import('./pages/Support'))
@@ -68,6 +70,30 @@ function PageLoader() {
 export default function App() {
   usePageViewLogger()
 
+  if (USE_SUPABASE && !IS_SUPABASE_CONFIGURED) {
+    return (
+      <div className="min-h-screen bg-paper flex items-center justify-center p-6">
+        <div className="card max-w-md w-full p-8 text-center space-y-4 border-hanko/20">
+          <div className="w-16 h-16 bg-hanko/10 text-hanko rounded-full flex items-center justify-center mx-auto">
+            <span className="text-3xl font-bold">!</span>
+          </div>
+          <h1 className="text-xl font-bold text-ink">Konfigurasi Tidak Lengkap</h1>
+          <p className="text-sm text-ink-soft leading-relaxed">
+            Aplikasi diatur untuk menggunakan <b>Supabase</b> tetapi URL atau Anon Key tidak ditemukan.
+          </p>
+          <div className="p-4 bg-paper-light rounded-xl text-left font-mono text-[10px] text-ink-soft overflow-x-auto">
+            VITE_USE_SUPABASE=true<br/>
+            VITE_SUPABASE_URL=MISSING<br/>
+            VITE_SUPABASE_ANON_KEY=MISSING
+          </div>
+          <p className="text-xs text-ink-soft italic">
+            Silakan lengkapi file <code>.env</code> atau tambahkan Environment Variables di dashboard hosting Anda.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <ErrorBoundary>
       <Suspense fallback={<PageLoader />}>
@@ -80,6 +106,7 @@ export default function App() {
 
           <Route element={<AppLayout />}>
             <Route path="/" element={<HomeRouter />} />
+            <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
 
             <Route path="/basics" element={<BasicsHub />} />
             <Route path="/basics/hiragana" element={<KanaPage script="hiragana" />} />

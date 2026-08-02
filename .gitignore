@@ -1,13 +1,14 @@
-node_modules
-dist
-dist-ssr
-.env
-.env.local
-*.local
+﻿node_modules
+public\.well-known
 .DS_Store
 serviceAccountKey.json
 
-/src/generated/prisma
+# Build outputs
+dist
+dist-ssr
 
-.vercel
+# Local environment variables
 .env*
+
+# IDE and platform files
+.vercel

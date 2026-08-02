@@ -3,4 +3,5 @@ Allow: /
 Disallow: /admin
 Disallow: /admin/*
 
-Sitemap: https://nihongoplus.com/sitemap.xml
+Host: https://nihongoplus.my.id
+Sitemap: https://nihongoplus.my.id/sitemap.xml

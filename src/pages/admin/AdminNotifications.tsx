@@ -84,7 +84,7 @@ export default function AdminNotifications() {
             >
               <option value="">-- Pilih User --</option>
               {users.map(u => (
-                <option key={u.uid} value={u.uid}>{u.displayName} ({u.email})</option>
+                <option key={u.uid} value={u.uid}>{u.fullName} ({u.email})</option>
               ))}
             </select>
           </div>

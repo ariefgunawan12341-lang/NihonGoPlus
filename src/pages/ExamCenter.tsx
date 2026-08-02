@@ -50,7 +50,7 @@ export default function ExamCenter({ level = 'N5' }: { level?: JLPTLevel }) {
     getOrCreateProgress(user.uid).then((p) => setExamsToday(todaysActivity(p).examsCompleted))
   }, [user, running])
 
-  const dailyLimitReached = !user?.isPremium && examsToday >= FREE_DAILY_EXAM_LIMIT
+  const dailyLimitReached = !user?.premium && examsToday >= FREE_DAILY_EXAM_LIMIT
 
   async function start() {
     setStarting(true)
@@ -93,7 +93,7 @@ export default function ExamCenter({ level = 'N5' }: { level?: JLPTLevel }) {
       <div>
         <h1 className="text-xl font-bold">JLPT Exam Center — {level}</h1>
         <p className="text-sm text-ink-soft">Official-style sections with a timer, scoring, and answer review.</p>
-        {!user?.isPremium && (
+        {!user?.premium && (
           <p className="text-xs text-ink-soft mt-1">
             Free plan: {Math.max(0, FREE_DAILY_EXAM_LIMIT - examsToday)}/{FREE_DAILY_EXAM_LIMIT} exams left today
           </p>

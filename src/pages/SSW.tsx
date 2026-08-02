@@ -33,7 +33,7 @@ export default function SSW() {
         category={industry}
         showLevelPicker={false}
         emptyLabel={`No ${industry} vocabulary yet — add some from the Admin Panel.`}
-        previewLimit={user?.isPremium ? undefined : 5}
+        previewLimit={user?.premium ? undefined : 5}
       />
     </div>
   )

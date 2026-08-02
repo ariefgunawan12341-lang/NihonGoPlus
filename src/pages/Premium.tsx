@@ -65,7 +65,7 @@ export default function Premium() {
       </div>
 
       {/* Coupon Section */}
-      {user && !user.isPremium && (
+      {user && !user.premium && (
         <div className="card p-5 border-blue-200 bg-blue-50/30">
           <h3 className="text-sm font-bold text-ink mb-3 flex items-center gap-2">
             <Tag size={16} className="text-blue-600" /> Punya kode kupon?
@@ -107,7 +107,7 @@ export default function Premium() {
                   </li>
                 ))}
               </ul>
-              {user && !user.isPremium && (
+              {user && !user.premium && (
                 <button className="btn-primary w-full text-sm" onClick={() => setPayingPackage(p)} disabled={!!pendingOrder}>
                   Pilih Paket
                 </button>
@@ -135,7 +135,7 @@ export default function Premium() {
             <Link to="/signup" className="btn-primary">Daftar</Link>
           </div>
         </div>
-      ) : user.isPremium ? (
+      ) : user.premium ? (
         <div className="card p-6 text-center bg-mint-50 border-mint-200">
           <div className="w-12 h-12 bg-mint-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-mint">
             <Check className="text-white" size={24} />

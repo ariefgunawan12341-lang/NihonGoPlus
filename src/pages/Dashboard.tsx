@@ -35,7 +35,7 @@ export default function Dashboard() {
     <div className="space-y-6 pb-10">
       <div className="card p-6 bg-gradient-to-br from-blue-600 to-indigo-700 text-white border-none shadow-lg">
         <p className="text-sm text-blue-100">Okaeri!</p>
-        <h1 className="text-2xl font-bold font-display">{user.displayName}さん</h1>
+        <h1 className="text-2xl font-bold font-display">{user.fullName}さん</h1>
         <div className="mt-4 flex items-center gap-6 flex-wrap">
           <div className="flex items-center gap-2">
             <Flame size={20} className={user.streak > 0 ? 'text-orange-400' : 'text-blue-200'} />
@@ -152,7 +152,7 @@ export default function Dashboard() {
                     {i + 1}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold truncate">{u.displayName}</p>
+                    <p className="text-xs font-bold truncate">{u.fullName}</p>
                     <p className="text-[10px] text-ink-soft">Level {u.level}</p>
                   </div>
                   <p className="text-[10px] font-bold text-blue-600">{u.xp} XP</p>

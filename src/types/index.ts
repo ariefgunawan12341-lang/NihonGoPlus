@@ -5,20 +5,22 @@ export type JLPTLevel = 'N5' | 'N4' | 'N3' | 'N2' | 'N1'
 export type UserRole = 'super_admin' | 'admin' | 'editor' | 'moderator' | 'user'
 
 export interface UserProfile {
+  id?: string
   uid: string
   email: string
-  displayName: string
   username?: string
-  photoURL?: string
+  fullName: string
+  avatarUrl?: string
+  role: UserRole
+  status: 'active' | 'disabled'
+  premium: boolean
   createdAt: number
+  lastLogin?: number | null
   xp: number
   level: number
   streak: number
   lastStudyDate: string | null // ISO date (yyyy-mm-dd)
-  isPremium: boolean
   isAdmin: boolean
-  isSuspended?: boolean
-  role?: UserRole
   premiumPlan?: 'monthly' | 'yearly' | null
   premiumExpire?: string | null // ISO date
   language?: 'en' | 'id' | 'ja'

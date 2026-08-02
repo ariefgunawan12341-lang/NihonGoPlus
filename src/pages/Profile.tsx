@@ -10,7 +10,7 @@ export default function Profile() {
   const { user, updateProfile, signOutUser, deleteAccount } = useAuth()
   const navigate = useNavigate()
 
-  const [name, setName] = useState(user?.displayName ?? '')
+  const [name, setName] = useState(user?.fullName ?? '')
   const [bio, setBio] = useState(user?.bio ?? '')
   const [country, setCountry] = useState(user?.country ?? '')
   const [targetLevel, setTargetLevel] = useState<JLPTLevel>(user?.targetLevel ?? 'N5')
@@ -30,7 +30,7 @@ export default function Profile() {
 
   async function save() {
     await updateProfile({
-      displayName: name,
+      fullName: name,
       bio,
       country,
       targetLevel
@@ -53,7 +53,7 @@ export default function Profile() {
     setPhotoError(null)
     try {
       const url = await uploadProfilePhoto(user.uid, file)
-      await updateProfile({ photoURL: url })
+      await updateProfile({ avatarUrl: url })
     } catch (err) {
       setPhotoError(err instanceof Error ? err.message : 'Could not upload photo.')
     } finally {
@@ -70,8 +70,8 @@ export default function Profile() {
           onClick={() => fileInputRef.current?.click()}
           className="relative w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 overflow-hidden group"
         >
-          {user.photoURL ? (
-            <img src={user.photoURL} alt="" className="w-full h-full object-cover" />
+          {user.avatarUrl ? (
+            <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
           ) : (
             <UserIcon size={28} />
           )}
@@ -81,7 +81,7 @@ export default function Profile() {
         </button>
         <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoSelect} />
         <div>
-          <p className="font-bold text-lg">{user.displayName}</p>
+          <p className="font-bold text-lg">{user.fullName}</p>
           <p className="text-sm text-ink-soft">{user.email}</p>
           {uploading && <p className="text-xs text-blue-600 mt-1">Uploading…</p>}
           {photoError && <p className="text-xs text-hanko mt-1">{photoError}</p>}
@@ -176,7 +176,7 @@ export default function Profile() {
           className="btn-secondary w-full text-hanko bg-hanko/10 hover:bg-hanko/20 border-none"
           onClick={async () => {
             await signOutUser()
-            navigate('/login')
+            navigate('/')
           }}
         >
           <LogOut size={16} /> Sign out

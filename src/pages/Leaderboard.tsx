@@ -36,7 +36,7 @@ export default function Leaderboard() {
                 {i + 1}
               </span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate">{u.displayName}{u.uid === user?.uid && ' (you)'}</p>
+                <p className="text-sm font-semibold truncate">{u.fullName}{u.uid === user?.uid && ' (you)'}</p>
                 <p className="text-xs text-ink-soft">Level {u.level}</p>
               </div>
               <p className="text-sm font-bold text-blue-600">{u.xp} XP</p>

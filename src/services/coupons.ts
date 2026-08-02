@@ -30,13 +30,13 @@ export async function redeemCoupon(code: string, uid: string): Promise<Coupon> {
       : null
 
     const { error: userError } = await supabase
-      .from('users')
+      .from('profiles')
       .update({
         is_premium: true,
         premium_plan: data.plan,
         premium_expire: expireDate
       })
-      .eq('uid', uid)
+      .eq('id', uid)
     if (userError) throw userError
 
     return data as any

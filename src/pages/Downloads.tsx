@@ -18,7 +18,7 @@ export default function Downloads() {
       <h1 className="text-xl font-bold mb-1">Download Modules</h1>
       <p className="text-sm text-ink-soft mb-5">PDF study materials and lesson packs, organized by JLPT level.</p>
 
-      {!user?.isPremium ? (
+      {!user?.premium ? (
         <PremiumGate>
           <h2 className="font-bold">Download Modules is a Premium feature</h2>
           <p className="text-sm text-ink-soft">Upgrade to download every study pack as a PDF, offline-ready.</p>

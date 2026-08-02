@@ -1,31 +1,36 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-// Supabase is only initialized when explicitly enabled via env vars, exactly
-// like the previous Firebase toggle worked. This keeps the app fully
-// runnable with zero external setup (local/demo mode) while making the
-// switch to a real Supabase project a one-file config change.
 export const USE_SUPABASE = import.meta.env.VITE_USE_SUPABASE === 'true'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
+export const IS_SUPABASE_CONFIGURED = !!(supabaseUrl && supabaseAnonKey)
+
 let client: SupabaseClient | null = null
 
 if (USE_SUPABASE) {
-  if (!supabaseUrl || !supabaseAnonKey) {
+  if (!IS_SUPABASE_CONFIGURED) {
     console.error(
-      '[NihonGoPlus] VITE_USE_SUPABASE=true but Supabase env vars are missing. ' +
-        'Fill in .env (see .env.example) with your Supabase project URL and anon key.'
+      '[NihonGoPlus] VITE_USE_SUPABASE=true but Supabase env vars are missing.',
+      { url: !!supabaseUrl, key: !!supabaseAnonKey }
     )
   } else {
-    client = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true
-      }
-    })
+    try {
+      client = createClient(supabaseUrl, supabaseAnonKey, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      })
+      console.log('[NihonGoPlus] Supabase client initialized successfully.')
+    } catch (err) {
+      console.error('[NihonGoPlus] Failed to initialize Supabase client:', err)
+    }
   }
+} else {
+  console.log('[NihonGoPlus] Running in LOCAL mode (VITE_USE_SUPABASE=false).')
 }
 
 export const supabase = client

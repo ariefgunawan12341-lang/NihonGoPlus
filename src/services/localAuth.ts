@@ -1,9 +1,5 @@
 import type { UserProfile } from '../types'
 
-// A minimal, self-contained auth implementation for local/demo mode.
-// NOT cryptographically secure — this is a development convenience so the
-// full app is usable with zero backend setup. Swap to Supabase Auth by
-// setting VITE_USE_SUPABASE=true (see authContext logic in AuthContext.tsx).
 const USERS_KEY = 'ngp_local_users'
 const SESSION_KEY = 'ngp_local_session'
 
@@ -31,7 +27,7 @@ export function getSessionUid(): string | null {
   return localStorage.getItem(SESSION_KEY)
 }
 
-export async function localSignUp(email: string, password: string, displayName: string): Promise<UserProfile> {
+export async function localSignUp(email: string, password: string, fullName: string): Promise<UserProfile> {
   const users = readUsers()
   if (users.some((u) => u.profile.email.toLowerCase() === email.toLowerCase())) {
     throw new Error('An account with this email already exists.')
@@ -39,18 +35,20 @@ export async function localSignUp(email: string, password: string, displayName: 
   const profile: UserProfile = {
     uid: crypto.randomUUID(),
     email,
-    displayName,
+    fullName,
+    username: email.split('@')[0],
     createdAt: Date.now(),
     xp: 0,
     level: 1,
     streak: 0,
     lastStudyDate: null,
-    isPremium: false,
+    premium: false,
     isAdmin: users.length === 0,
-    isSuspended: false,
+    status: 'active',
     bio: '',
     country: '',
-    targetLevel: 'N5'
+    targetLevel: 'N5',
+    role: users.length === 0 ? 'admin' : 'user'
   }
   users.push({ profile, passwordHash: await hash(password) })
   writeUsers(users)

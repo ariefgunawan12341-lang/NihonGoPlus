@@ -33,11 +33,11 @@ export default function AdminPremiumOrders() {
 
   async function confirmOrder(order: PremiumOrder) {
     if (!admin) return
-    await setUserAdminFlags(order.userUid, { isPremium: true, premiumPlan: null })
+    await setUserAdminFlags(order.userUid, { premium: true, premiumPlan: null })
     await premiumOrderCollection.update(order.id, {
       status: 'confirmed',
       reviewedAt: Date.now(),
-      reviewedBy: admin.displayName
+      reviewedBy: admin.fullName
     })
     await logAdminActivity(admin, 'confirm_premium_order', 'premium_orders', order.id, { userEmail: order.userEmail, packageName: order.packageName })
     showToast(`Pembayaran ${order.userName} dikonfirmasi — akun sudah Premium.`, 'success')
@@ -49,7 +49,7 @@ export default function AdminPremiumOrders() {
     await premiumOrderCollection.update(order.id, {
       status: 'rejected',
       reviewedAt: Date.now(),
-      reviewedBy: admin.displayName
+      reviewedBy: admin.fullName
     })
     await logAdminActivity(admin, 'reject_premium_order', 'premium_orders', order.id, { userEmail: order.userEmail })
     showToast(`Order ${order.userName} ditolak.`, 'info')

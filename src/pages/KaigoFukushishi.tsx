@@ -33,7 +33,7 @@ export default function KaigoFukushishi() {
         category={topic}
         showLevelPicker={false}
         emptyLabel={`No ${topic} content yet — add some from the Admin Panel.`}
-        previewLimit={user?.isPremium ? undefined : 5}
+        previewLimit={user?.premium ? undefined : 5}
       />
     </div>
   )

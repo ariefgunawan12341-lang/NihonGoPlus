@@ -10,7 +10,7 @@ export function checkAccess(accessType: AccessType | undefined, user: UserProfil
   if (type === 'free') return user ? 'granted' : 'needs-login'
   // premium
   if (!user) return 'needs-login'
-  return user.isPremium ? 'granted' : 'needs-premium'
+  return user.premium ? 'granted' : 'needs-premium'
 }
 
 export function canAccess(accessType: AccessType | undefined, user: UserProfile | null): boolean {

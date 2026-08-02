@@ -122,7 +122,7 @@ export function ExamRunner({
 
                 <div className="space-y-1">
                   <p className="text-xs text-ink-soft italic">Diberikan kepada:</p>
-                  <p className="text-2xl font-display font-bold text-ink underline underline-offset-8">{user?.displayName}</p>
+                  <p className="text-2xl font-display font-bold text-ink underline underline-offset-8">{user?.fullName}</p>
                 </div>
 
                 <div className="space-y-2 max-w-sm mx-auto">

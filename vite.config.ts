@@ -3,6 +3,11 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  base: '/',
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true
+  },
   plugins: [
     react(),
     VitePWA({
@@ -11,19 +16,22 @@ export default defineConfig({
       manifest: {
         name: 'NihonGoPlus',
         short_name: 'NihonGoPlus',
+        id: 'https://nihongoplus.my.id/',
         description: 'Learn Japanese: Hiragana, Katakana, Kanji, Vocabulary, Grammar and JLPT prep.',
         theme_color: '#5B8DEF',
         background_color: '#FAFAF8',
         display: 'standalone',
-        start_url: '/',
+        start_url: 'https://nihongoplus.my.id',
+        scope: 'https://nihongoplus.my.id/',
         icons: [
-          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+          { src: 'https://nihongoplus.my.id/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'https://nihongoplus.my.id/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'https://nihongoplus.my.id/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
         ]
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
+        navigateFallback: '/index.html',
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,

@@ -15,7 +15,7 @@ export async function logAdminActivity(
   try {
     await supabase.from('admin_activity_log').insert({
       admin_uid: admin.uid,
-      admin_name: admin.displayName,
+      admin_name: admin.fullName,
       action,
       target_table: targetTable,
       target_id: targetId,

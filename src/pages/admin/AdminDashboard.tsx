@@ -33,7 +33,7 @@ export default function AdminDashboard() {
         vocab: vocab.length,
         questions: questions.length,
         users: users.length,
-        premiumUsers: users.filter((u) => u.isPremium).length,
+        premiumUsers: users.filter((u) => u.premium).length,
         kanji: content.filter((c) => c.kind === 'kanji').length,
         grammar: content.filter((c) => c.kind === 'grammar').length,
         ssw: content.filter((c) => c.kind === 'ssw').length,

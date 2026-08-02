@@ -37,7 +37,7 @@ export function Topbar() {
       <div className="flex items-center justify-between gap-4 px-4 sm:px-6 py-3">
         <div>
           <p className="text-xs text-ink-soft">{greeting()},</p>
-          <p className="font-display font-semibold text-ink">{user.displayName}</p>
+          <p className="font-display font-semibold text-ink">{user.fullName}</p>
         </div>
 
         <div className="flex items-center gap-3">

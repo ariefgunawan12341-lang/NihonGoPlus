@@ -11,14 +11,18 @@ import {
   localDeleteAccount,
   getSessionUid
 } from '../services/localAuth'
-import { fetchSupabaseProfile, createSupabaseProfile, updateSupabaseProfile } from '../services/supabaseUserProfile'
+import { fetchSupabaseProfile, updateSupabaseProfile } from '../services/supabaseUserProfile'
+
+interface SignUpResult {
+  sessionCreated: boolean
+  emailVerificationSent: boolean
+}
 
 interface AuthContextValue {
   user: UserProfile | null
   loading: boolean
-  signUp: (email: string, password: string, displayName: string) => Promise<void>
+  signUp: (email: string, password: string, fullName: string) => Promise<SignUpResult>
   signIn: (email: string, password: string) => Promise<void>
-  signInWithGoogle: () => Promise<void>
   signOutUser: () => Promise<void>
   updateProfile: (patch: Partial<UserProfile>) => Promise<void>
   refreshProfile: () => Promise<void>
@@ -33,143 +37,157 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    if (USE_SUPABASE && supabase) {
-      // supabase-js fires onAuthStateChange once immediately with the
-      // current session on subscribe (event: 'INITIAL_SESSION'), then again
-      // on every future sign-in/out/token-refresh. A separate getSession()
-      // call here used to run in parallel with this same listener — both
-      // independently fetched the profile and called setUser(), racing each
-      // other. If the second one lost the race (e.g. a transient RLS/JWT
-      // timing hiccup returned no row), it would silently overwrite a
-      // correct "isAdmin: true" with a stale/fallback "isAdmin: false" —
-      // which is exactly the "admin menu disappears after reload" bug.
-      // Using this single listener as the only source of truth removes that
-      // race entirely.
-      const { data: sub } = supabase.auth.onAuthStateChange(async (event, session) => {
-        if (session?.user) {
-          let profile = await fetchSupabaseProfile(session.user.id)
-          if (!profile && event === 'SIGNED_IN') {
-            const meta = session.user.user_metadata ?? {}
-            profile = {
-              uid: session.user.id,
-              email: session.user.email ?? '',
-              displayName: meta.full_name ?? meta.name ?? session.user.email?.split('@')[0] ?? 'User',
-              username: meta.user_name ?? session.user.email?.split('@')[0],
-              photoURL: meta.avatar_url ?? meta.picture,
-              createdAt: Date.now(),
-              xp: 0,
-              level: 1,
-              streak: 0,
-              lastStudyDate: null,
-              isPremium: false,
-              isAdmin: false,
-              role: 'user',
-              language: 'en',
-              bio: '',
-              country: '',
-              targetLevel: 'N5'
-            }
-            try {
-              await createSupabaseProfile(profile)
-            } catch {
-              profile = await fetchSupabaseProfile(session.user.id)
-            }
-          }
-          if (profile) {
-            if (profile.isSuspended) {
-              if (supabase) await supabase.auth.signOut()
-              setUser(null)
-              // We can't easily show a toast from here without risking a
-              // render-cycle loop, but most users will see the sign-in
-              // error if they try to log back in.
-            } else {
-              setUser(profile)
-            }
-          }
-        } else {
-          setUser(null)
+  async function syncProfile(uid: string): Promise<UserProfile | null> {
+    try {
+      const profile = await fetchSupabaseProfile(uid)
+      if (profile) {
+        if (profile.status === 'disabled') {
+          console.warn('[Auth] User account is disabled:', uid)
+          if (supabase) await supabase.auth.signOut()
+          return null
         }
+        return profile
+      }
+    } catch (err) {
+      console.error('[Auth] Failed to sync profile:', err)
+    }
+    return null
+  }
+
+  useEffect(() => {
+    let sub: { subscription: { unsubscribe: () => void } } | null = null
+
+    async function initAuth() {
+      if (USE_SUPABASE && supabase) {
+        console.log('[Auth] Initializing Supabase Auth...')
+        try {
+          const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+          if (sessionError) {
+            console.error('[Auth] Session retrieval error:', sessionError)
+          }
+          if (session?.user) {
+            console.log('[Auth] Session found for user:', session.user.id)
+            const p = await syncProfile(session.user.id)
+            setUser(p)
+          } else {
+            console.log('[Auth] No active session found.')
+          }
+        } catch (error) {
+          console.error('[Auth] Initialization exception:', error)
+        } finally {
+          setLoading(false)
+        }
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+          console.log(`[Auth] Event: ${event}`, { uid: session?.user?.id })
+          if (session?.user) {
+            if (event === 'SIGNED_IN' || event === 'USER_UPDATED' || event === 'INITIAL_SESSION') {
+              const p = await syncProfile(session.user.id)
+              setUser(p)
+            }
+          } else {
+            setUser(null)
+          }
+          setLoading(false)
+        })
+        sub = { subscription }
+      } else {
+        const uid = getSessionUid()
+        if (uid) setUser(localGetProfile(uid))
         setLoading(false)
+      }
+    }
+
+    initAuth()
+    return () => sub?.subscription.unsubscribe()
+  }, []) // Removed [user] to avoid unnecessary re-subscriptions
+
+  async function signUp(email: string, password: string, fullName: string): Promise<SignUpResult> {
+    console.log('[Auth] Attempting signUp for:', email)
+    if (USE_SUPABASE && supabase) {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            username: fullName.trim().toLowerCase().replace(/\s+/g, '_')
+          }
+        }
       })
 
-      return () => sub.subscription.unsubscribe()
-    } else {
-      const uid = getSessionUid()
-      if (uid) setUser(localGetProfile(uid))
-      setLoading(false)
-    }
-  }, [])
-
-  async function signUp(email: string, password: string, displayName: string) {
-    if (USE_SUPABASE && supabase) {
-      const { data, error } = await supabase.auth.signUp({ email, password })
-      if (error) throw error
-      if (!data.user) throw new Error('Sign up succeeded but no user was returned — check your email to confirm your account if email confirmation is enabled.')
-
-      const profile: UserProfile = {
-        uid: data.user.id,
-        email,
-        displayName,
-        username: email.split('@')[0],
-        createdAt: Date.now(),
-        xp: 0,
-        level: 1,
-        streak: 0,
-        lastStudyDate: null,
-        isPremium: false,
-        isAdmin: false,
-        role: 'user',
-        language: 'en',
-        bio: '',
-        country: '',
-        targetLevel: 'N5'
+      if (error) {
+        console.error('[Auth] signUp Error:', {
+          status: error.status,
+          code: error.code,
+          message: error.message,
+          full: error
+        })
+        throw error
       }
-      await createSupabaseProfile(profile)
-      setUser(profile)
+
+      console.log('[Auth] signUp Success:', {
+        user: data.user?.id,
+        session: !!data.session
+      })
+
+      if (!data.user) {
+        throw new Error('Sign up failed: No user returned from Supabase.')
+      }
+
+      if (data.session) {
+        const p = await syncProfile(data.user.id)
+        setUser(p)
+        return { sessionCreated: true, emailVerificationSent: false }
+      }
+
+      return { sessionCreated: false, emailVerificationSent: true }
     } else {
-      const profile = await localSignUp(email, password, displayName)
+      const profile = await localSignUp(email, password, fullName)
       setUser(profile)
+      return { sessionCreated: true, emailVerificationSent: false }
     }
   }
 
   async function signIn(email: string, password: string) {
+    console.log('[Auth] Attempting signIn for:', email)
     if (USE_SUPABASE && supabase) {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) throw error
-      const profile = await fetchSupabaseProfile(data.user.id)
-      if (profile?.isSuspended) {
-        await supabase.auth.signOut()
-        throw new Error('Akun Anda telah ditangguhkan (suspended). Silakan hubungi admin.')
+
+      if (error) {
+        console.error('[Auth] signIn Error:', {
+          status: error.status,
+          code: error.code,
+          message: error.message,
+          full: error
+        })
+        throw error
       }
-      setUser(profile)
+
+      console.log('[Auth] signIn Success:', data.user.id)
+
+      const profile = await fetchSupabaseProfile(data.user.id)
+      if (profile?.status === 'disabled') {
+        await supabase.auth.signOut()
+        throw new Error('Akun Anda telah dinonaktifkan. Silakan hubungi admin.')
+      }
+
+      if (profile) {
+        const now = Date.now()
+        await updateSupabaseProfile(data.user.id, { lastLogin: now })
+        setUser({ ...profile, lastLogin: now })
+      }
     } else {
       const profile = await localSignIn(email, password)
-      if (profile.isSuspended) {
-        throw new Error('Akun Anda telah ditangguhkan (suspended).')
+      if (profile.status === 'disabled') {
+        throw new Error('Akun Anda telah dinonaktifkan.')
       }
       setUser(profile)
     }
-  }
-
-  async function signInWithGoogle() {
-    if (!USE_SUPABASE || !supabase) {
-      throw new Error('Login Google memerlukan Supabase (set VITE_USE_SUPABASE=true). Aktifkan provider Google di Supabase Dashboard -> Authentication -> Providers.')
-    }
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        }
-      }
-    })
-    if (error) throw error
   }
 
   async function signOutUser() {
+    console.log('[Auth] Signing out...')
     if (USE_SUPABASE && supabase) {
       await supabase.auth.signOut()
     } else {
@@ -201,10 +219,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function changePassword(oldPassword: string, newPassword: string) {
     if (USE_SUPABASE && supabase) {
       if (!user) throw new Error('Not signed in.')
-      // Supabase's updateUser() only requires an active session, not the old
-      // password — but we verify it first anyway for the same UX/security
-      // expectation the rest of the app already has (confirm current password
-      // before allowing a change).
       const { error: verifyError } = await supabase.auth.signInWithPassword({ email: user.email, password: oldPassword })
       if (verifyError) throw new Error('Current password is incorrect.')
       const { error } = await supabase.auth.updateUser({ password: newPassword })
@@ -216,24 +230,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function forgotPassword(email: string) {
     if (USE_SUPABASE && supabase) {
+      const appUrl = (import.meta.env.VITE_APP_URL || window.location.origin).replace(/\/$/, '')
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`
+        redirectTo: `${appUrl}/reset-password`
       })
       if (error) throw error
     } else {
-      throw new Error('Password reset via email requires Supabase (set VITE_USE_SUPABASE=true). In local mode, sign up again or ask an admin to reset your account.')
+      throw new Error('Password reset requires Supabase mode.')
     }
   }
 
   async function deleteAccount() {
     if (!user) return
     if (USE_SUPABASE && supabase) {
-      // In Supabase, users can't delete themselves easily via the client SDK
-      // if they have RLS restrictions or if they aren't using the Admin API.
-      // We'll call a hypothetical RPC or just the delete profile logic.
-      // Real production usually uses an Edge Function for this.
-      const { error } = await supabase.from('users').delete().eq('uid', user.uid)
-      if (error) throw error
+      const { data: { session } } = await supabase.auth.getSession()
+      const accessToken = session?.access_token
+      if (!accessToken) {
+        throw new Error('Tidak ada sesi aktif untuk menghapus akun.')
+      }
+
+      const response = await fetch('/api/delete-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}))
+        throw new Error(payload.error || 'Gagal menghapus akun.')
+      }
+
       await supabase.auth.signOut()
     } else {
       localDeleteAccount(user.uid)
@@ -242,7 +270,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signUp, signIn, signInWithGoogle, signOutUser, updateProfile, refreshProfile, changePassword, forgotPassword, deleteAccount }}>
+    <AuthContext.Provider value={{ user, loading, signUp, signIn, signOutUser, updateProfile, refreshProfile, changePassword, forgotPassword, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   )

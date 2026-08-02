@@ -28,7 +28,7 @@ export function CommentSection({ articleId }: { articleId: string }) {
       id: `comment-${crypto.randomUUID()}`,
       articleId,
       authorUid: user.uid,
-      authorName: user.displayName,
+      authorName: user.fullName,
       body: text.trim(),
       createdAt: Date.now(),
       approved: true // auto-approved by default; admins can moderate/remove from Admin Panel

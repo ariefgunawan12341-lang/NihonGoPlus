@@ -131,5 +131,5 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'level-10', label: 'Dedicated Learner', description: 'Reach Level 10', isUnlocked: (u) => u.level >= 10 },
   { id: 'lessons-10', label: 'Busy Bee', description: 'Complete 10 study actions', isUnlocked: (_u, p) => p.completedLessons >= 10 },
   { id: 'lessons-100', label: 'Marathoner', description: 'Complete 100 study actions', isUnlocked: (_u, p) => p.completedLessons >= 100 },
-  { id: 'premium', label: 'Supporter', description: 'Upgrade to Premium', isUnlocked: (u) => u.isPremium }
+  { id: 'premium', label: 'Supporter', description: 'Upgrade to Premium', isUnlocked: (u) => u.premium }
 ]

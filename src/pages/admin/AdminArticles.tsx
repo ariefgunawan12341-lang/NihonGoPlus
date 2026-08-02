@@ -46,7 +46,7 @@ export default function AdminArticles() {
   function openCreate() {
     if (!user) return
     setEditing(null)
-    setForm(emptyArticle(user.uid, user.displayName))
+    setForm(emptyArticle(user.uid, user.fullName))
     setError(null)
     setShowModal(true)
   }
