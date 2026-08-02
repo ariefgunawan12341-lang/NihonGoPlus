@@ -3,7 +3,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 export const USE_SUPABASE = import.meta.env.VITE_USE_SUPABASE === 'true'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
 
 export const IS_SUPABASE_CONFIGURED = !!(supabaseUrl && supabaseAnonKey)
 
@@ -32,7 +32,7 @@ if (USE_SUPABASE) {
           detectSessionInUrl: true
         }
       })
-      console.log('[NihonGoPlus] Supabase client initialized.')
+      console.log(`[NihonGoPlus] Supabase client initialized for: ${supabaseUrl}`)
     } catch (err) {
       console.error('[NihonGoPlus] Failed to initialize Supabase client:', err)
     }

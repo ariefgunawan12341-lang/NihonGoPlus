@@ -1,35 +1,34 @@
-# Audit & Perbaikan Supabase Auth NihongoPlus
+# Implementation Plan - Update Supabase Configuration
 
-Ditemukan masalah kritis pada konfigurasi environment variable yang menyebabkan error `NetworkError` dan `CORS request failed`. Key yang digunakan saat ini adalah format **Clerk** (`sb_publishable_...`), bukan format **Supabase Anon Key** (`ey...`).
+This plan focuses on updating the Supabase project URL and ensuring environment variables are correctly used to fix `NetworkError` and `CORS` issues.
 
 ## User Review Required
 
-> [!CAUTION]
-> **Key Supabase Salah**: File `.env` Anda saat ini menggunakan key yang diawali dengan `sb_publishable_`. Ini adalah key untuk layanan **Clerk**, bukan **Supabase**. Supabase anon key harus diawali dengan `ey...`.
->
-> Silakan buka [Supabase Dashboard](https://app.supabase.com/) -> Project Settings -> API, lalu salin **anon public** key yang benar ke `.env` Anda.
+> [!IMPORTANT]
+> **New Supabase URL**: The project will be migrated to `https://jsccbdamadrxcmblkqrm.supabase.co`.
+> **Action Required**: After this update, you **must** update your **Redirect URLs** and **Site URL** in the Supabase Dashboard (`Authentication -> Settings -> URL Configuration`) to match your production domain (`https://nihongoplus.my.id`) and local development (`http://localhost:5173`).
 
 ## Proposed Changes
 
-### 1. Supabase Client (`src/supabase/client.ts`)
-- [MODIFY] Menambahkan validasi format key untuk memberikan peringatan dini jika key yang digunakan salah (misal: format Clerk).
-- [MODIFY] Meningkatkan logging saat inisialisasi gagal.
+### 1. Environment Variables (`.env` & `.env.example`)
+- [MODIFY] `.env`: Update `VITE_SUPABASE_URL` and `SUPABASE_URL` to the new URL.
+- [MODIFY] `.env.example`: Update example values to reflect the new project ID and clarify key naming.
 
-### 2. Auth Context (`src/contexts/AuthContext.tsx`)
-- [VERIFY] Memastikan `signUp`, `signInWithPassword`, dan `signOut` sudah sesuai standar Supabase JS v2.
-- [MODIFY] Menambahkan logging yang lebih detail pada setiap kegagalan fetch agar `error.status` dan `error.code` terlihat di console.
+### 2. Supabase Client (`src/supabase/client.ts`)
+- [MODIFY] Update the client initialization to be more robust.
+- [MODIFY] Ensure `VITE_SUPABASE_ANON_KEY` is the primary variable name, but support `VITE_SUPABASE_PUBLISHABLE_KEY` if provided.
 
-### 3. Environment Example (`.env.example`)
-- [MODIFY] Memperbarui contoh value agar menunjukkan format JWT yang benar untuk Supabase (`ey...`).
+### 3. Build & Verification
+- [RUN] `npm run build` to ensure the new configuration is bundled correctly.
 
 ---
 
 ## Verification Plan
 
 ### Automated Tests
-- `npm run build`: Memastikan tidak ada error saat kompilasi.
+- `npm run build`: Confirm no regressions.
 
 ### Manual Verification
-1. **Console Check**: Lihat tab Console di browser. Jika muncul pesan `[NihonGoPlus] VITE_SUPABASE_ANON_KEY looks like a Clerk key`, berarti key harus diganti.
-2. **Login/Register**: Pastikan setelah mengganti key, request tidak lagi menghasilkan `CORS failed` atau `NetworkError`.
-3. **Vercel**: Pastikan variable di Vercel Dashboard sudah diperbarui dengan key yang benar.
+1. **Console Check**: Verify that "Supabase client initialized." appears in the console without "looks like a Clerk key" errors.
+2. **Network Check**: Attempt a login/register and verify the request goes to `jsccbdamadrxcmblkqrm.supabase.co` instead of the old URL.
+3. **PWA Check**: Ensure the start URL and scope in `vite.config.ts` are consistent with the environment.
