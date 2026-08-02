@@ -1,4 +1,4 @@
--- NihonGoPlus Supabase schema (Full Production Ready)
+-- NihonGoPlus Supabase schema (Full Production Ready - Hardened)
 -- Run this in the Supabase SQL Editor.
 
 create extension if not exists "pgcrypto";
@@ -7,6 +7,9 @@ create extension if not exists "pgcrypto";
 -- PROFILES
 -- ============================================================
 
+-- If a table named "users" exists in public schema, we should rename it or drop it
+-- to avoid confusion with the "profiles" approach.
+-- For a clean install, we just create "profiles".
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   email text not null,
@@ -34,6 +37,7 @@ create table if not exists public.profiles (
 
 alter table public.profiles enable row level security;
 
+-- SECURITY DEFINER so this can look up the caller's own row without RLS recursion
 create or replace function public.is_admin() returns boolean
 language sql security definer stable as $$
   select exists (
@@ -47,6 +51,7 @@ language sql security definer stable as $$
   select exists (select 1 from public.profiles where id = auth.uid() and premium = true);
 $$;
 
+-- Central access-tier check
 create or replace function public.can_access(item_access_type text) returns boolean
 language sql security definer stable as $$
   select case
@@ -57,7 +62,8 @@ language sql security definer stable as $$
   end;
 $$;
 
--- TRIGGERS for PROFILES
+-- AUTOMATIC PROFILE CREATION TRIGGER (Hardened)
+-- This function MUST NOT fail the auth user creation.
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -67,6 +73,8 @@ declare
   default_username text;
 begin
   default_username := split_part(new.email, '@', 1);
+
+  -- Use a sub-transaction block to catch errors and prevent rolling back the main auth transaction.
   begin
     insert into public.profiles (id, email, username, full_name, role)
     values (
@@ -78,17 +86,21 @@ begin
     )
     on conflict (id) do nothing;
   exception when others then
+    -- Log the error (Postgres log) but don't fail user creation
     raise warning 'Error in handle_new_user for user %: %', new.id, sqlerrm;
   end;
+
   return new;
 end;
 $$;
 
+-- Re-create trigger
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
+-- UPDATED AT TRIGGER
 create or replace function public.handle_updated_at()
 returns trigger
 language plpgsql as $$
@@ -103,7 +115,7 @@ create trigger on_profile_updated
   before update on public.profiles
   for each row execute procedure public.handle_updated_at();
 
--- RLS for PROFILES
+-- RLS POLICIES for PROFILES
 drop policy if exists "profiles_select_own" on public.profiles;
 create policy "profiles_select_own" on public.profiles for select
   to authenticated
@@ -223,8 +235,8 @@ create table if not exists public.articles (
   access_type text not null default 'public' check (access_type in ('public','free','premium')),
   author_uid uuid references public.profiles(id),
   author_name text default '',
-  created_at bigint not null,
-  updated_at bigint not null
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
 );
 alter table public.articles enable row level security;
 drop policy if exists "articles_select" on public.articles;
@@ -241,7 +253,7 @@ create table if not exists public.comments (
   author_uid uuid references public.profiles(id),
   author_name text default '',
   body text not null,
-  created_at bigint not null,
+  created_at timestamp with time zone default now(),
   approved boolean default true
 );
 alter table public.comments enable row level security;
@@ -257,7 +269,7 @@ create table if not exists public.announcements (
   message text not null,
   active boolean default true,
   level text default 'info' check (level in ('info','success','warning')),
-  created_at bigint not null
+  created_at timestamp with time zone default now()
 );
 alter table public.announcements enable row level security;
 drop policy if exists "announcements_select" on public.announcements;
@@ -299,8 +311,8 @@ create table if not exists public.premium_orders (
   proof_url text,
   note text,
   status text not null default 'pending' check (status in ('pending','confirmed','rejected')),
-  created_at bigint not null,
-  reviewed_at bigint,
+  created_at timestamp with time zone default now(),
+  reviewed_at timestamp with time zone,
   reviewed_by text
 );
 alter table public.premium_orders enable row level security;
@@ -319,8 +331,8 @@ create table if not exists public.coupons (
   max_uses int default 1,
   current_uses int default 0,
   active boolean default true,
-  created_at bigint not null,
-  expires_at bigint
+  created_at timestamp with time zone default now(),
+  expires_at timestamp with time zone
 );
 alter table public.coupons enable row level security;
 drop policy if exists "coupons_select" on public.coupons;
@@ -329,18 +341,36 @@ drop policy if exists "coupons_admin" on public.coupons;
 create policy "coupons_admin" on public.coupons for all using (public.is_admin()) with check (public.is_admin());
 
 -- ============================================================
+-- ADMIN ACTIVITY LOG
+-- ============================================================
+
+create table if not exists public.admin_activity_log (
+  id uuid primary key default gen_random_uuid(),
+  admin_uid uuid references public.profiles(id),
+  admin_name text not null default '',
+  action text not null,
+  target_table text,
+  target_id text,
+  details jsonb,
+  created_at timestamp with time zone default now()
+);
+alter table public.admin_activity_log enable row level security;
+drop policy if exists "admin_activity_log_admin" on public.admin_activity_log;
+create policy "admin_activity_log_admin" on public.admin_activity_log for all using (public.is_admin()) with check (public.is_admin());
+
+-- ============================================================
 -- OTHERS: FEEDBACK, SETTINGS, PAGEVIEWS
 -- ============================================================
 
 create table if not exists public.feedback (
-  id text primary key,
+  id uuid primary key default gen_random_uuid(),
   user_id uuid references public.profiles(id),
   user_email text,
   user_name text,
   subject text not null,
   message text not null,
   status text not null default 'unread' check (status in ('unread','read','replied','archived')),
-  created_at bigint not null
+  created_at timestamp with time zone default now()
 );
 alter table public.feedback enable row level security;
 drop policy if exists "feedback_insert" on public.feedback;
@@ -386,15 +416,15 @@ drop policy if exists "settings_admin" on public.settings;
 create policy "settings_admin" on public.settings for all using (public.is_admin()) with check (public.is_admin());
 
 create table if not exists public.pageviews (
-  id text primary key,
+  id uuid primary key default gen_random_uuid(),
   path text not null,
-  "timestamp" bigint not null
+  timestamp timestamp with time zone default now()
 );
 alter table public.pageviews enable row level security;
 drop policy if exists "pageviews_insert" on public.pageviews;
 create policy "pageviews_insert" on public.pageviews for insert with check (true);
-drop policy if exists "pageviews_select_admin" on public.pageviews;
-create policy "pageviews_select_admin" on public.pageviews for select using (public.is_admin());
+drop policy if exists "pageviews_admin" on public.pageviews;
+create policy "pageviews_admin" on public.pageviews for all using (public.is_admin()) with check (public.is_admin());
 
 -- ============================================================
 -- PER-USER TABLES (PROGRESS, SRS, EXAMS, etc)
@@ -447,7 +477,7 @@ create table if not exists public.kaiwa_sessions (
   id text not null,
   user_id uuid not null references public.profiles(id) on delete cascade,
   scenario text,
-  created_at bigint,
+  created_at timestamp with time zone default now(),
   messages jsonb,
   primary key (user_id, id)
 );
@@ -460,7 +490,7 @@ create table if not exists public.bookmarks (
   user_id uuid not null references public.profiles(id) on delete cascade,
   item_id text not null,
   item_type text not null check (item_type in ('vocab','kanji','grammar','article')),
-  created_at bigint not null
+  created_at timestamp with time zone default now()
 );
 alter table public.bookmarks enable row level security;
 drop policy if exists "bookmarks_owner" on public.bookmarks;
@@ -471,7 +501,7 @@ create table if not exists public.user_notes (
   user_id uuid not null references public.profiles(id) on delete cascade,
   item_id text not null,
   note text not null,
-  updated_at bigint not null
+  updated_at timestamp with time zone default now()
 );
 alter table public.user_notes enable row level security;
 drop policy if exists "user_notes_owner" on public.user_notes;
@@ -485,7 +515,7 @@ create table if not exists public.notifications (
   link text,
   read boolean default false,
   type text default 'system' check (type in ('system','achievement','promotion','reminder')),
-  created_at bigint not null
+  created_at timestamp with time zone default now()
 );
 alter table public.notifications enable row level security;
 drop policy if exists "notifications_owner" on public.notifications;
@@ -497,7 +527,7 @@ create table if not exists public.user_achievements (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.profiles(id) on delete cascade,
   achievement_id text not null,
-  unlocked_at bigint not null,
+  unlocked_at timestamp with time zone default now(),
   unique (user_id, achievement_id)
 );
 alter table public.user_achievements enable row level security;
@@ -506,6 +536,7 @@ create policy "user_achievements_select" on public.user_achievements for select 
 drop policy if exists "user_achievements_owner" on public.user_achievements;
 create policy "user_achievements_owner" on public.user_achievements for insert with check (auth.uid() = user_id);
 
+-- ============================================================
 -- ROLE GRANTS
 -- ============================================================
 grant usage on schema public to anon, authenticated;

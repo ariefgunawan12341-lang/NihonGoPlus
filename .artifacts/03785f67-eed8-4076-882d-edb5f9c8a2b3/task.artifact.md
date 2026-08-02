@@ -1,8 +1,6 @@
-# Full Project Audit & Fix - Task List
+# Task List - Fix Database Schema
 
-- [ ] Refactor `SupabaseCollection.ts` with logging [/]
-- [ ] Fix `coupons.ts` field mismatch [/]
-- [ ] Update `schema.sql` with missing tables and RLS [/]
-- [ ] Verify `ArticleList.tsx` and `ArticleDetail.tsx` [/]
-- [ ] Final Audit of all CRUD operations [/]
-- [ ] Run `npm run build` and fix errors [ ]
+- [x] Rewrite `schema.sql` to be fully consistent with `profiles` table
+- [x] Add missing `admin_activity_log` to `schema.sql`
+- [x] Fix `bootstrap_admin.sql` to reference `profiles`
+- [x] Verify SQL syntax for Supabase compatibility

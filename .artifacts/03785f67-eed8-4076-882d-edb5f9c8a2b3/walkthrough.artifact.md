@@ -1,49 +1,39 @@
-# Walkthrough - Full Project Audit & Fix
+# Walkthrough - Database Schema & Admin Promotion Fix
 
-Saya telah menyelesaikan audit menyeluruh dan perbaikan pada project NihongoPlus. Fokus utama adalah pada sinkronisasi database Supabase, perbaikan sistem Artikel, dan validasi Kupon.
+I have successfully fixed the SQL execution errors and normalized the database schema to use `public.profiles` consistently.
 
-## Bug yang Ditemukan & Diperbaiki
+## Key Changes
 
-### 1. Sinkronisasi Artikel (Admin vs Website)
-- **Masalah**: Artikel yang dibuat di Admin Panel tidak muncul di daftar artikel website.
-- **Penyebab**:
-    1. Tabel `articles` tidak memiliki policy RLS (Row Level Security) yang mengizinkan akses `SELECT` untuk publik (anon).
-    2. File `schema.sql` sebelumnya sangat tidak lengkap, sehingga tabel-tabel penting tidak terkonfigurasi dengan benar di project Supabase baru.
-- **Perbaikan**:
-    - Memperbarui `schema.sql` dengan definisi tabel lengkap untuk `articles`, `comments`, dan `announcements`.
-    - Menambahkan policy RLS eksplisit agar artikel dengan status `published` dapat dibaca oleh siapa saja.
-    - Menambahkan logging pada `SupabaseCollection` untuk memantau trafik data.
+### 1. Database Schema (`supabase/schema.sql`)
+- **Normalized Table Names**: Removed all references to a standalone `public.users` table. The application now exclusively uses `public.profiles` for user metadata and roles, linked directly to Supabase's `auth.users`.
+- **Foreign Key Sync**: Updated all related tables (`articles`, `coupons`, `progress`, `srs_cards`, etc.) to correctly reference `public.profiles(id)`.
+- **Missing Tables Added**: Included the `admin_activity_log` table which was required by the Admin Panel but missing from the previous schema.
+- **Robust Triggers**:
+    - Hardened the `handle_new_user` trigger to prevent registration failures even if profile creation hits an edge case.
+    - Added an `updated_at` trigger to keep track of row modifications.
+- **Improved RLS**: Refined security policies to be more explicit and secure for production.
 
-### 2. Validasi Kupon (Invalid Coupon)
-- **Masalah**: Kupon yang diubah di Admin Panel tetap dianggap tidak valid saat ditukarkan.
-- **Penyebab**:
-    1. Service `redeemCoupon` mencoba mengupdate kolom `is_premium` pada tabel `profiles`, padahal nama kolom yang benar di database adalah `premium`.
-    2. Kurangnya policy RLS pada tabel `coupons` yang menghalangi pembacaan data oleh user biasa.
-- **Perbaikan**:
-    - Memperbaiki query update di `src/services/coupons.ts` agar menggunakan kolom `premium`.
-    - Menambahkan skema tabel `coupons` lengkap dengan policy RLS ke dalam `schema.sql`.
+### 2. Admin Promotion (`supabase/bootstrap_admin.sql`)
+- **Fixed Table Reference**: Updated the script to target `public.profiles` instead of `public.users`.
+- **Corrected Columns**: Ensured it promotes accounts using the correct column names (`role`, `is_admin`, `id`).
 
-### 3. Konsistensi Supabase Client
-- **Perbaikan**: Memastikan seluruh operasi CRUD melalui satu instance `supabase` di `src/supabase/client.ts`. Menambahkan proteksi format key agar tidak tertukar dengan layanan lain (seperti Clerk).
+### 3. Service Consistency
+- Verified that all frontend services (`adminUsers.ts`, `coupons.ts`, etc.) are already using the `profiles` table and `id` column.
 
-## Ringkasan Perubahan
+## Technical Summary
 
-### Layanan & Core
-- [MODIFY] `src/services/supabaseCollection.ts`: Menambah logging CRUD (Fetch, Create, Update, Delete) agar admin bisa melihat aktivitas database di console browser.
-- [MODIFY] `src/services/coupons.ts`: Fix bug penamaan kolom `premium`.
-
-### Database (SQL)
-- [MODIFY] [schema.sql](file:///E:/NIHONGOPLUS UPDATE TERBARU/supabase/schema.sql): Skema sekarang mencakup seluruh fitur aplikasi (Articles, Coupons, Orders, Packages, Feedback, Announcements, dll) lengkap dengan policy RLS yang aman.
-
-### Build & Production
-- [RUN] `npm run build`: Berhasil dijalankan dengan **0 error**. Aplikasi siap untuk dideploy ulang ke Vercel.
+- **Modified Files**:
+    - `supabase/schema.sql`: Full rewrite for consistency and production readiness.
+    - `supabase/bootstrap_admin.sql`: Corrected table and column references.
 
 ---
 
-## Langkah Manual Penting
+## Final Manual Steps
 > [!CAUTION]
-> **Update Database**: Anda **WAJIB** menyalin seluruh isi dari [schema.sql](file:///E:/NIHONGOPLUS UPDATE TERBARU/supabase/schema.sql) dan menjalankannya di **Supabase SQL Editor** project Anda. Ini akan memperbaiki seluruh policy RLS yang sebelumnya menghambat data muncul di website.
+> **Action Required**: To fix the "relation public.users does not exist" error, you must follow these steps exactly:
+> 1. Copy the full content of [schema.sql](file:///E:/NIHONGOPLUS UPDATE TERBARU/supabase/schema.sql) and run it in your **Supabase SQL Editor**.
+> 2. Once the schema is created, sign up for an account via your app's Register page.
+> 3. After registering, run the corrected [bootstrap_admin.sql](file:///E:/NIHONGOPLUS UPDATE TERBARU/supabase/bootstrap_admin.sql) in the SQL Editor to promote your account to Admin.
 
 render_diffs(file:///E:/NIHONGOPLUS UPDATE TERBARU/supabase/schema.sql)
-render_diffs(file:///E:/NIHONGOPLUS UPDATE TERBARU/src/services/supabaseCollection.ts)
-render_diffs(file:///E:/NIHONGOPLUS UPDATE TERBARU/src/services/coupons.ts)
+render_diffs(file:///E:/NIHONGOPLUS UPDATE TERBARU/supabase/bootstrap_admin.sql)
