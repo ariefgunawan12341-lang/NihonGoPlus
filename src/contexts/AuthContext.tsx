@@ -48,8 +48,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         return profile
       }
-    } catch (err) {
-      console.error('[Auth] Failed to sync profile:', err)
+    } catch (err: any) {
+      console.error('[Auth] Failed to sync profile:', {
+        message: err.message,
+        status: err.status,
+        code: err.code,
+        full: err
+      })
     }
     return null
   }

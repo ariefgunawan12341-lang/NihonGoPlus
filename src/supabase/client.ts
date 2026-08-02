@@ -16,6 +16,14 @@ if (USE_SUPABASE) {
       { url: !!supabaseUrl, key: !!supabaseAnonKey }
     )
   } else {
+    // Basic validation of the key format
+    if (supabaseAnonKey.startsWith('sb_publishable_')) {
+      console.error(
+        '[NihonGoPlus] CRITICAL: VITE_SUPABASE_ANON_KEY looks like a Clerk publishable key! ' +
+        'Supabase keys should start with "ey...". This will cause CORS and Network errors.'
+      )
+    }
+
     try {
       client = createClient(supabaseUrl, supabaseAnonKey, {
         auth: {
@@ -24,7 +32,7 @@ if (USE_SUPABASE) {
           detectSessionInUrl: true
         }
       })
-      console.log('[NihonGoPlus] Supabase client initialized successfully.')
+      console.log('[NihonGoPlus] Supabase client initialized.')
     } catch (err) {
       console.error('[NihonGoPlus] Failed to initialize Supabase client:', err)
     }

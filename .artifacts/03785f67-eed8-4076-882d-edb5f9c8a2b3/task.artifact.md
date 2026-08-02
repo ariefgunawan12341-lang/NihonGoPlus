@@ -1,7 +1,6 @@
-# Task List - Fix Registration Bug
+# Audit & Perbaikan Supabase Auth
 
-- [ ] Fix infinite loop and add logging in `AuthContext.tsx` [/]
-- [ ] Add verbose error reporting in `Signup.tsx` [/]
-- [ ] Audit and harden `handle_new_user` trigger in `schema.sql` [/]
-- [ ] Verify Supabase client instantiation in `client.ts` [/]
-- [ ] Run build and verify zero errors [ ]
+- [ ] Update `src/supabase/client.ts` with key validation [/]
+- [ ] Refine error logging in `src/contexts/AuthContext.tsx` [/]
+- [ ] Update `.env.example` [/]
+- [ ] Run final build check [ ]
