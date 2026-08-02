@@ -32,7 +32,7 @@ export async function redeemCoupon(code: string, uid: string): Promise<Coupon> {
     const { error: userError } = await supabase
       .from('profiles')
       .update({
-        is_premium: true,
+        premium: true,
         premium_plan: data.plan,
         premium_expire: expireDate
       })

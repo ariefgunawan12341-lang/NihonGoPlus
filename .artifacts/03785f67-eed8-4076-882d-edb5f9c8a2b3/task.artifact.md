@@ -1,6 +1,8 @@
-# Audit & Perbaikan Supabase Auth
+# Full Project Audit & Fix - Task List
 
-- [ ] Update `src/supabase/client.ts` with key validation [/]
-- [ ] Refine error logging in `src/contexts/AuthContext.tsx` [/]
-- [ ] Update `.env.example` [/]
-- [ ] Run final build check [ ]
+- [ ] Refactor `SupabaseCollection.ts` with logging [/]
+- [ ] Fix `coupons.ts` field mismatch [/]
+- [ ] Update `schema.sql` with missing tables and RLS [/]
+- [ ] Verify `ArticleList.tsx` and `ArticleDetail.tsx` [/]
+- [ ] Final Audit of all CRUD operations [/]
+- [ ] Run `npm run build` and fix errors [ ]

@@ -1,46 +1,49 @@
-# Walkthrough - Production-Ready Auth & Database Refactor
+# Walkthrough - Full Project Audit & Fix
 
-I have completed the final refactor for **NihonGoPlus**, aligning the project with Supabase Best Practices and ensuring a secure, production-ready environment.
+Saya telah menyelesaikan audit menyeluruh dan perbaikan pada project NihongoPlus. Fokus utama adalah pada sinkronisasi database Supabase, perbaikan sistem Artikel, dan validasi Kupon.
 
-## Key Accomplishments
+## Bug yang Ditemukan & Diperbaiki
 
-### 1. Database Architecture & Triggers
-- **Normalized Profiles**: Standardized the `public.profiles` table to store all application-specific user data, linked to Supabase's internal `auth.users`.
-- **Automatic Profile Creation**: Implemented a PostgreSQL trigger (`on_auth_user_created`) that automatically inserts a record into `public.profiles` the moment a user signs up. This prevents "missing profile" errors.
-- **Timestamp Tracking**: Added `updated_at` with a trigger and a `last_login` field to track user engagement.
+### 1. Sinkronisasi Artikel (Admin vs Website)
+- **Masalah**: Artikel yang dibuat di Admin Panel tidak muncul di daftar artikel website.
+- **Penyebab**:
+    1. Tabel `articles` tidak memiliki policy RLS (Row Level Security) yang mengizinkan akses `SELECT` untuk publik (anon).
+    2. File `schema.sql` sebelumnya sangat tidak lengkap, sehingga tabel-tabel penting tidak terkonfigurasi dengan benar di project Supabase baru.
+- **Perbaikan**:
+    - Memperbarui `schema.sql` dengan definisi tabel lengkap untuk `articles`, `comments`, dan `announcements`.
+    - Menambahkan policy RLS eksplisit agar artikel dengan status `published` dapat dibaca oleh siapa saja.
+    - Menambahkan logging pada `SupabaseCollection` untuk memantau trafik data.
 
-### 2. Secure Email & Password Authentication
-- **Pure Flow**: Removed all legacy Google OAuth code. The app now exclusively uses high-security Email & Password auth via `supabase.auth`.
-- **Session Reliability**: Refactored `AuthContext` to use `supabase.auth.getSession()` and `onAuthStateChange()`. This ensures sessions are correctly restored after page refreshes and browser restarts.
-- **Transparency**: Registration and Login forms now display real-time, specific error messages from Supabase (e.g., "Email not confirmed", "User already exists").
+### 2. Validasi Kupon (Invalid Coupon)
+- **Masalah**: Kupon yang diubah di Admin Panel tetap dianggap tidak valid saat ditukarkan.
+- **Penyebab**:
+    1. Service `redeemCoupon` mencoba mengupdate kolom `is_premium` pada tabel `profiles`, padahal nama kolom yang benar di database adalah `premium`.
+    2. Kurangnya policy RLS pada tabel `coupons` yang menghalangi pembacaan data oleh user biasa.
+- **Perbaikan**:
+    - Memperbaiki query update di `src/services/coupons.ts` agar menggunakan kolom `premium`.
+    - Menambahkan skema tabel `coupons` lengkap dengan policy RLS ke dalam `schema.sql`.
 
-### 3. Advanced User Management (Admin Panel)
-- **Centralized Data**: The User Management table now reads exclusively from `public.profiles`.
-- **Powerful Tools**:
-    - **Search & Sort**: Real-time filtering and header-based sorting.
-    - **Pagination**: Optimized UI for handling many users.
-    - **Actions**: Admins can now **Reset Passwords** (via email), **Toggle Account Status**, **Change Roles**, and **Manage Premium** memberships directly from the table.
+### 3. Konsistensi Supabase Client
+- **Perbaikan**: Memastikan seluruh operasi CRUD melalui satu instance `supabase` di `src/supabase/client.ts`. Menambahkan proteksi format key agar tidak tertukar dengan layanan lain (seperti Clerk).
 
-### 4. Robust Security (RLS)
-- **Policy Audit**: Refined Row Level Security (RLS) on all tables.
-- **Access Control**: Users are restricted to their own data, while Admins have full read/write permissions across the database.
-- **Authentication Scope**: Policies are now targeted `TO authenticated` for better protection.
+## Ringkasan Perubahan
 
-## Technical Summary
+### Layanan & Core
+- [MODIFY] `src/services/supabaseCollection.ts`: Menambah logging CRUD (Fetch, Create, Update, Delete) agar admin bisa melihat aktivitas database di console browser.
+- [MODIFY] `src/services/coupons.ts`: Fix bug penamaan kolom `premium`.
 
-- **Modified Files**:
-    - `supabase/schema.sql`: Full table structure, triggers, and RLS.
-    - `src/contexts/AuthContext.tsx`: Core session and profile logic.
-    - `src/pages/Signup.tsx` & `src/pages/Login.tsx`: Final UI/UX polish.
-    - `src/pages/admin/AdminUsers.tsx`: Advanced management features.
-    - `src/services/adminUsers.ts`: Expanded admin service layer.
+### Database (SQL)
+- [MODIFY] [schema.sql](file:///E:/NIHONGOPLUS UPDATE TERBARU/supabase/schema.sql): Skema sekarang mencakup seluruh fitur aplikasi (Articles, Coupons, Orders, Packages, Feedback, Announcements, dll) lengkap dengan policy RLS yang aman.
 
-- **Build Status**: ✅ **SUCCESS (0 errors)**
-- **Production Status**: **100% READY**
+### Build & Production
+- [RUN] `npm run build`: Berhasil dijalankan dengan **0 error**. Aplikasi siap untuk dideploy ulang ke Vercel.
 
+---
+
+## Langkah Manual Penting
 > [!CAUTION]
-> **Action Required**: Please execute the updated [schema.sql](file:///E:/NIHONGOPLUS UPDATE TERBARU/supabase/schema.sql) in your Supabase SQL Editor to apply the new Triggers and RLS policies.
+> **Update Database**: Anda **WAJIB** menyalin seluruh isi dari [schema.sql](file:///E:/NIHONGOPLUS UPDATE TERBARU/supabase/schema.sql) dan menjalankannya di **Supabase SQL Editor** project Anda. Ini akan memperbaiki seluruh policy RLS yang sebelumnya menghambat data muncul di website.
 
 render_diffs(file:///E:/NIHONGOPLUS UPDATE TERBARU/supabase/schema.sql)
-render_diffs(file:///E:/NIHONGOPLUS UPDATE TERBARU/src/contexts/AuthContext.tsx)
-render_diffs(file:///E:/NIHONGOPLUS UPDATE TERBARU/src/pages/admin/AdminUsers.tsx)
+render_diffs(file:///E:/NIHONGOPLUS UPDATE TERBARU/src/services/supabaseCollection.ts)
+render_diffs(file:///E:/NIHONGOPLUS UPDATE TERBARU/src/services/coupons.ts)

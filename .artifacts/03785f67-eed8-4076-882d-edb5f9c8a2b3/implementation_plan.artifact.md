@@ -1,34 +1,50 @@
-# Implementation Plan - Update Supabase Configuration
+# Implementation Plan - Full Project Audit & Fix
 
-This plan focuses on updating the Supabase project URL and ensuring environment variables are correctly used to fix `NetworkError` and `CORS` issues.
+Layanan Supabase pada project NihongoPlus akan diperbaiki secara menyeluruh, mencakup sinkronisasi database, perbaikan bug CRUD pada Artikel dan Kupon, serta pembersihan sisa-sisa konfigurasi lama.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **New Supabase URL**: The project will be migrated to `https://jsccbdamadrxcmblkqrm.supabase.co`.
-> **Action Required**: After this update, you **must** update your **Redirect URLs** and **Site URL** in the Supabase Dashboard (`Authentication -> Settings -> URL Configuration`) to match your production domain (`https://nihongoplus.my.id`) and local development (`http://localhost:5173`).
+> **Database Sync**: Saya telah menemukan bahwa file `schema.sql` yang ada saat ini sangat tidak lengkap (hanya berisi `profiles` dan `vocabulary`). Hal ini menyebabkan fitur lain seperti Artikel dan Kupon tidak sinkron jika RLS (Row Level Security) tidak diatur dengan benar di project baru.
+> **Langkah Manual**: Setelah saya memperbarui file `schema.sql`, Anda **WAJIB** menjalankan seluruh isi file tersebut di **Supabase SQL Editor** untuk memastikan semua tabel dan policy tersedia.
 
 ## Proposed Changes
 
-### 1. Environment Variables (`.env` & `.env.example`)
-- [MODIFY] `.env`: Update `VITE_SUPABASE_URL` and `SUPABASE_URL` to the new URL.
-- [MODIFY] `.env.example`: Update example values to reflect the new project ID and clarify key naming.
+### 1. Supabase Client & Collections
+- [MODIFY] `src/services/supabaseCollection.ts`:
+    - Menambahkan `console.log` dan `console.error` pada setiap operasi CRUD untuk tracking real-time.
+    - Memperbaiki penanganan `id` agar konsisten.
+- [MODIFY] `src/supabase/client.ts`:
+    - Memastikan inisialisasi hanya menggunakan environment variable Vite.
 
-### 2. Supabase Client (`src/supabase/client.ts`)
-- [MODIFY] Update the client initialization to be more robust.
-- [MODIFY] Ensure `VITE_SUPABASE_ANON_KEY` is the primary variable name, but support `VITE_SUPABASE_PUBLISHABLE_KEY` if provided.
+### 2. Artikel & CMS
+- [MODIFY] `src/pages/ArticleList.tsx` & `src/pages/ArticleDetail.tsx`:
+    - Menambahkan logging untuk mendeteksi jika data kosong karena RLS atau memang tidak ada di DB.
+- [MODIFY] `supabase/schema.sql`:
+    - Menambahkan skema lengkap untuk tabel `articles`, `comments`, `announcements`.
+    - Menambahkan policy RLS agar artikel `published` dapat dibaca oleh publik (anon).
 
-### 3. Build & Verification
-- [RUN] `npm run build` to ensure the new configuration is bundled correctly.
+### 3. Sistem Kupon
+- [MODIFY] `src/services/coupons.ts`:
+    - **BUG FIX**: Mengubah field `is_premium` menjadi `premium` agar sesuai dengan skema database `profiles`.
+- [MODIFY] `supabase/schema.sql`:
+    - Menambahkan skema tabel `coupons`.
+    - Menambahkan policy RLS agar kupon dapat diperiksa oleh user yang login.
+
+### 4. Admin & Auth
+- [MODIFY] `src/services/adminUsers.ts`:
+    - Memastikan update role dan status user menggunakan kolom yang benar (`premium`, bukan `is_premium`).
+- [MODIFY] `supabase/schema.sql`:
+    - Menambahkan skema tabel `premium_packages` dan `premium_orders`.
 
 ---
 
 ## Verification Plan
 
 ### Automated Tests
-- `npm run build`: Confirm no regressions.
+- `npm run build`: Memastikan aplikasi siap deploy ke Vercel tanpa error TypeScript/Lint.
 
 ### Manual Verification
-1. **Console Check**: Verify that "Supabase client initialized." appears in the console without "looks like a Clerk key" errors.
-2. **Network Check**: Attempt a login/register and verify the request goes to `jsccbdamadrxcmblkqrm.supabase.co` instead of the old URL.
-3. **PWA Check**: Ensure the start URL and scope in `vite.config.ts` are consistent with the environment.
+1. **Cek Console**: Saat membuka halaman Artikel, pastikan log menunjukkan jumlah baris yang ditarik dari Supabase.
+2. **Redeem Kupon**: Coba gunakan kupon dari website, pastikan status `premium` di tabel `profiles` berubah menjadi `true`.
+3. **Admin Artikel**: Buat artikel di Admin Panel, lalu refresh halaman Artikel di website.
