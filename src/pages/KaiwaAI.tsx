@@ -118,10 +118,10 @@ export default function KaiwaAI() {
       if (autoTts) speak(data.reply)
 
       if (user) {
-        const kaiwaCollection = userKaiwaCollection(user.uid)
+        const kaiwaCollection = userKaiwaCollection(user.id)
         await kaiwaCollection.create({ id: `kaiwa-${Date.now()}`, scenario: `[${mode}] ${scenario}`, createdAt: Date.now(), messages: finalMessages })
         updateProfile(applyStudySession(user, 2))
-        logActivity(user.uid, 'quizzesCompleted')
+        logActivity(user.id, 'quizzesCompleted')
       }
     } catch (e) {
       setError(

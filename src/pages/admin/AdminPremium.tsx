@@ -99,7 +99,7 @@ export default function AdminPremium() {
           </thead>
           <tbody>
             {premiumUsers.map((u) => (
-              <tr key={u.uid} className="border-b border-line last:border-0">
+              <tr key={u.id} className="border-b border-line last:border-0">
                 <td className="px-4 py-3 font-medium">{u.fullName}</td>
                 <td className="px-4 py-3 text-ink-soft">{u.email}</td>
               </tr>

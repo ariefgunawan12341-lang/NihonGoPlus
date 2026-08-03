@@ -29,7 +29,7 @@ export default function Premium() {
 
   function loadOrders() {
     if (!user) return
-    premiumOrderCollection.listFiltered({ userUid: user.uid }).then((orders) => {
+    premiumOrderCollection.listFiltered({ userUid: user.id }).then((orders) => {
       setPendingOrder(orders.find((o) => o.status === 'pending') ?? null)
     })
   }
@@ -46,7 +46,7 @@ export default function Premium() {
     setRedeeming(true)
     setCouponMsg(null)
     try {
-      await redeemCoupon(couponCode, user.uid)
+      await redeemCoupon(couponCode, user.id)
       setCouponMsg({ text: 'Selamat! Kupon berhasil ditukarkan. Akun Anda sekarang Premium.', type: 'success' })
       await refreshProfile()
     } catch (err) {

@@ -24,18 +24,21 @@ export function CommentSection({ articleId }: { articleId: string }) {
   async function post() {
     if (!user || !text.trim()) return
     setPosting(true)
-    await commentCollection.create({
-      id: `comment-${crypto.randomUUID()}`,
-      articleId,
-      authorUid: user.uid,
-      authorName: user.fullName,
-      body: text.trim(),
-      createdAt: Date.now(),
-      approved: true // auto-approved by default; admins can moderate/remove from Admin Panel
-    })
-    setText('')
-    setPosting(false)
-    load()
+    try {
+      await commentCollection.create({
+        articleId,
+        authorUid: user.id,
+        authorName: user.fullName,
+        body: text.trim(),
+        approved: true // auto-approved by default; admins can moderate/remove from Admin Panel
+      } as any)
+      setText('')
+      load()
+    } catch (err) {
+      console.error('Gagal mengirim komentar:', err)
+    } finally {
+      setPosting(false)
+    }
   }
 
   return (

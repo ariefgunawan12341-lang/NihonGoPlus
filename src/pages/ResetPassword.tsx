@@ -1,37 +1,39 @@
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase, USE_SUPABASE } from '../supabase/client'
+import { confirmPasswordReset } from 'firebase/auth'
+import { auth } from '../firebase'
 
 export default function ResetPassword() {
   const navigate = useNavigate()
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
 
-  async function onSubmit(e: FormEvent) {
+  // Firebase uses oobCode from URL
+  const query = new URLSearchParams(window.location.search)
+  const oobCode = query.get('oobCode')
+
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (password !== confirmPassword) {
+      setError('Password tidak cocok.')
+      return
+    }
+    if (!oobCode) {
+      setError('Kode reset tidak valid atau sudah kedaluwarsa.')
+      return
+    }
+
     setError(null)
-    if (password.length < 6) {
-      setError('Password minimal 6 karakter.')
-      return
-    }
-    if (!USE_SUPABASE || !supabase) {
-      setError('Reset password lewat email hanya tersedia di mode Supabase.')
-      return
-    }
     setLoading(true)
     try {
-      // Supabase automatically establishes a temporary session from the
-      // reset-password email link's URL fragment (detectSessionInUrl: true
-      // in src/supabase/client.ts), so updateUser() here just needs an
-      // active session, not the old password.
-      const { error } = await supabase.auth.updateUser({ password })
-      if (error) throw error
+      await confirmPasswordReset(auth, oobCode, password)
       setSuccess(true)
-      setTimeout(() => navigate('/login'), 2000)
+      setTimeout(() => navigate('/login'), 3000)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Gagal reset password. Tautan mungkin sudah kedaluwarsa.')
+      setError(err instanceof Error ? err.message : 'Gagal mereset password.')
     } finally {
       setLoading(false)
     }
@@ -40,18 +42,37 @@ export default function ResetPassword() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-paper px-4">
       <div className="card w-full max-w-sm p-8">
-        <div className="flex flex-col items-center mb-6">
-          <div className="w-12 h-12 rounded-full bg-hanko flex items-center justify-center text-white font-jp font-bold text-xl mb-3">語</div>
-          <h1 className="text-xl font-bold">Buat password baru</h1>
-        </div>
+        <h1 className="text-xl font-bold mb-2">Reset Password</h1>
+        <p className="text-sm text-ink-soft mb-6">Masukkan password baru Anda.</p>
 
         {success ? (
-          <p className="text-sm text-mint-600 text-center">Password berhasil diubah! Mengalihkan ke halaman masuk…</p>
+          <div className="bg-mint-50 text-mint-600 p-4 rounded-xl text-sm font-semibold">
+            Password berhasil diubah! Mengalihkan ke halaman login…
+          </div>
         ) : (
-          <form onSubmit={onSubmit} className="space-y-3">
-            <input className="input" type="password" placeholder="Password baru (min. 6 karakter)" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <form onSubmit={onSubmit} className="space-y-4">
+            <input
+              className="input"
+              type="password"
+              placeholder="Password baru"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+            />
+            <input
+              className="input"
+              type="password"
+              placeholder="Konfirmasi password baru"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              minLength={6}
+            />
             {error && <p className="text-sm text-hanko">{error}</p>}
-            <button className="btn-primary w-full" disabled={loading}>{loading ? 'Menyimpan…' : 'Simpan password baru'}</button>
+            <button className="btn-primary w-full" disabled={loading}>
+              {loading ? 'Memproses…' : 'Reset Password'}
+            </button>
           </form>
         )}
       </div>

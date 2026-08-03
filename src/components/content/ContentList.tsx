@@ -46,7 +46,7 @@ export function ContentList({
 
   async function handleItemClick(item: ContentItem) {
     if (!user) return
-    await logActivity(user.uid, 'quizzesCompleted', 0, {
+    await logActivity(user.id, 'quizzesCompleted', 0, {
       type: 'lesson',
       title: `Mempelajari ${kind}: ${item.title}`,
       xpGained: 2

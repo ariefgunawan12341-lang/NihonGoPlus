@@ -1,0 +1,33 @@
+type User @table {
+  email: String!
+  displayName: String!
+  avatarUrl: String
+}
+
+type Decision @table {
+  title: String!
+  creator: User!
+  status: String!
+  description: String
+  deadline: Timestamp
+}
+
+type Option @table {
+  decision: Decision!
+  title: String!
+  author: User!
+  description: String
+}
+
+type Vote @table {
+  option: Option!
+  user: User!
+  value: String!
+  comment: String
+}
+
+type Member @table {
+  decision: Decision!
+  user: User!
+  role: String!
+}

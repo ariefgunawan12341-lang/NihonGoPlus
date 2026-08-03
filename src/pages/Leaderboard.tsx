@@ -26,7 +26,7 @@ export default function Leaderboard() {
       ) : (
         <div className="card divide-y divide-line">
           {users.map((u, i) => (
-            <div key={u.uid} className={clsx('flex items-center gap-3 p-3', u.uid === user?.uid && 'bg-blue-50')}>
+            <div key={u.id} className={clsx('flex items-center gap-3 p-3', u.id === user?.id && 'bg-blue-50')}>
               <span
                 className={clsx(
                   'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0',
@@ -36,7 +36,7 @@ export default function Leaderboard() {
                 {i + 1}
               </span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate">{u.fullName}{u.uid === user?.uid && ' (you)'}</p>
+                <p className="text-sm font-semibold truncate">{u.fullName}{u.id === user?.id && ' (you)'}</p>
                 <p className="text-xs text-ink-soft">Level {u.level}</p>
               </div>
               <p className="text-sm font-bold text-blue-600">{u.xp} XP</p>

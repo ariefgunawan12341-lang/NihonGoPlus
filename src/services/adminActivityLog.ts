@@ -1,9 +1,9 @@
-import { USE_SUPABASE, supabase } from '../supabase/client'
-import type { UserProfile } from '../types'
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
+import type { UserProfile } from '../types';
+import { toSnakeCase } from './caseConvert';
 
-/** Records an admin action to admin_activity_log (Supabase only — local mode
- *  has no server-side audit trail to write to). Call this after any
- *  meaningful create/update/delete from an Admin Panel page. */
+/** Records an admin action to admin_activity_log in Firestore. */
 export async function logAdminActivity(
   admin: UserProfile,
   action: string,
@@ -11,18 +11,18 @@ export async function logAdminActivity(
   targetId?: string,
   details?: Record<string, unknown>
 ): Promise<void> {
-  if (!USE_SUPABASE || !supabase) return
   try {
-    await supabase.from('admin_activity_log').insert({
-      admin_uid: admin.uid,
-      admin_name: admin.fullName,
+    const logRef = collection(db, 'admin_activity_log');
+    await addDoc(logRef, toSnakeCase({
+      adminId: admin.id,
+      adminName: admin.fullName,
       action,
-      target_table: targetTable,
-      target_id: targetId,
-      details: details ?? null
-    })
+      targetTable,
+      targetId,
+      details: details ?? null,
+      createdAt: serverTimestamp()
+    }));
   } catch (err) {
-    // Never let logging failures break the actual admin action.
-    console.error('Failed to log admin activity:', err)
+    console.error('Failed to log admin activity:', err);
   }
 }

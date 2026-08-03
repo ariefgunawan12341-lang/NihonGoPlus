@@ -1,20 +1,10 @@
-import { USE_SUPABASE } from '../supabase/client'
-import { LocalCollection, seedIfEmpty } from './localCollection'
-import { SupabaseCollection } from './supabaseCollection'
-import { UserScopedTable } from './userScopedCollection'
+import { FirestoreCollection, UserScopedFirestoreTable } from './firebase/firestoreCollection'
 import type { VocabWord, ExamQuestion, SrsCardState, ExamAttempt, UserProfile, KaiwaSession, DownloadModule, UserProgress, Bookmark, UserNote, UserNotification, UserAchievement } from '../types'
 import type { ContentItem, Article, Comment, Announcement, SiteSettings, PremiumPackage, PageView, PremiumOrder, Feedback, Coupon } from '../types/content'
-import { vocabN5 } from '../data/vocabN5'
-import { vocabN4 } from '../data/vocabN4'
-import { examN5 } from '../data/examN5'
-import { examN4 } from '../data/examN4'
-import { contentSeed } from '../data/contentSeed'
 
-// Single choke point: every screen imports collections from here, never
-// directly from localCollection/supabaseCollection. Swapping the backend
-// for the whole app is therefore just flipping VITE_USE_SUPABASE.
+// The application now strictly uses Firebase as the backend.
 function makeCollection<T extends { id: string }>(table: string) {
-  return USE_SUPABASE ? new SupabaseCollection<T>(table) : new LocalCollection<T>(table)
+  return new FirestoreCollection<T>(table)
 }
 
 export const vocabCollection = makeCollection<VocabWord>('vocabulary')
@@ -49,19 +39,15 @@ export async function updateSiteSettings(patch: Partial<SiteSettings>): Promise<
   }
 }
 
-// Per-user data: Firestore modeled this as subcollections (users/{uid}/...);
-// Postgres uses flat tables + a user_id column restricted by RLS instead
-// (see supabase/schema.sql). Local mode keeps its existing uid-prefixed
-// localStorage key approach. Either way, callers get the same interface.
 function makeUserCollection<T extends { id: string }>(table: string, uid: string) {
-  return USE_SUPABASE ? new UserScopedTable<T>(table, uid) : new LocalCollection<T>(`users_${uid}_${table}`)
+  return new UserScopedFirestoreTable<T>(table, uid)
 }
 
 export function userProgressCollection(uid: string) {
   return makeUserCollection<UserProgress>('progress', uid)
 }
 
-/** Generic per-user table factory for anything not already covered above. */
+/** Generic per-user table factory. */
 export function makeUserSubcollectionCollection<T extends { id: string }>(uid: string, name: string) {
   return makeUserCollection<T>(name, uid)
 }
@@ -94,19 +80,26 @@ export function userAchievementCollection(uid: string) {
   return makeUserCollection<UserAchievement>('user_achievements', uid)
 }
 
-// Users are handled a little differently: in local mode they live inside the
-// ngp_local_users blob (see services/localAuth.ts) rather than a flat
-// collection, so the Admin "Users" screen reads/writes through this adapter
-// instead of makeCollection. In Supabase mode it reads the `users` table
-// directly since every signed-up user already has a row there.
-export { listAllUsersAdmin, setUserAdminFlags } from './adminUsers'
+import { auth } from '../firebase'
+import { sendPasswordResetEmail } from 'firebase/auth'
 
-// Seed local demo data on first run so the app has real content immediately.
-// No-ops when running against real Supabase (seed your database via the
-// Admin Panel's Bulk Import, or scripts/importSupabase.ts, instead).
-export function seedLocalData() {
-  if (USE_SUPABASE) return
-  seedIfEmpty('vocabulary', [...vocabN5, ...vocabN4])
-  seedIfEmpty('questions', [...examN5, ...examN4])
-  seedIfEmpty('content_items', contentSeed)
+// User Profile is stored in the 'users' collection with Doc ID = UID
+const usersCol = new FirestoreCollection<UserProfile>('users')
+
+export async function listAllUsersAdmin(): Promise<UserProfile[]> {
+  return usersCol.list()
 }
+
+export async function setUserAdminFlags(id: string, patch: Partial<UserProfile>): Promise<void> {
+  await usersCol.update(id, patch)
+}
+
+export async function adminResetUserPassword(email: string): Promise<void> {
+  await sendPasswordResetEmail(auth, email)
+}
+
+export async function adminDeleteUser(id: string): Promise<void> {
+  // Soft delete via Firestore for now since client SDK can't delete other users
+  await usersCol.update(id, { status: 'disabled' } as any)
+}
+

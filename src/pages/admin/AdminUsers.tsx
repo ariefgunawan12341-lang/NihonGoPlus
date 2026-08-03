@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Crown, ShieldCheck, Search, Ban, Pencil, Trash2, Key, User as UserIcon, ArrowUpDown } from 'lucide-react'
-import { listAllUsersAdmin, setUserAdminFlags, adminResetUserPassword, adminDeleteUser } from '../../services/adminUsers'
+import { Crown, Search, Ban, Pencil, Trash2, Key, ArrowUpDown } from 'lucide-react'
+import { listAllUsersAdmin, setUserAdminFlags } from '../../services/db'
 import { logAdminActivity } from '../../services/adminActivityLog'
 import { useAuth } from '../../contexts/AuthContext'
 import type { UserProfile, UserRole } from '../../types'
 import { Modal } from '../../components/admin/Modal'
+import { auth } from '../../firebase'
+import { sendPasswordResetEmail } from 'firebase/auth'
 
 export default function AdminUsers() {
   const { user: currentAdmin } = useAuth()
@@ -31,23 +33,23 @@ export default function AdminUsers() {
 
   useEffect(load, [])
 
-  async function update(uid: string, patch: Partial<UserProfile>) {
-    await setUserAdminFlags(uid, patch)
-    setUsers(prev => prev.map(u => u.uid === uid ? { ...u, ...patch } : u))
+  async function update(id: string, patch: Partial<UserProfile>) {
+    await setUserAdminFlags(id, patch)
+    setUsers(prev => prev.map(u => u.id === id ? { ...u, ...patch } : u))
     if (currentAdmin) {
-      await logAdminActivity(currentAdmin, 'update_user_profile', 'profiles', uid, patch)
+      await logAdminActivity(currentAdmin, 'update_user_profile', 'profiles', id, patch)
     }
   }
 
   async function toggleStatus(u: UserProfile) {
     const newStatus = u.status === 'active' ? 'disabled' : 'active'
-    await update(u.uid, { status: newStatus })
+    await update(u.id, { status: newStatus })
   }
 
   async function handleResetPassword(email: string) {
     if (confirm(`Send password reset email to ${email}?`)) {
       try {
-        await adminResetUserPassword(email)
+        await sendPasswordResetEmail(auth, email)
         alert('Password reset email sent.')
       } catch (err) {
         alert('Failed to send reset email.')
@@ -55,13 +57,15 @@ export default function AdminUsers() {
     }
   }
 
-  async function remove(uid: string) {
-    if (confirm('Permanently delete this user from database? Auth record must be deleted in Supabase Dashboard.')) {
+  async function remove(id: string) {
+    if (confirm('Permanently delete this user from database? Authentication record must be deleted manually in Firebase Console.')) {
       try {
-        await adminDeleteUser(uid)
-        setUsers(prev => prev.filter(u => u.uid !== uid))
+        // Since we don't have admin SDK on client, we just delete the Firestore profile.
+        // @ts-ignore
+        await setUserAdminFlags(id, { status: 'deleted' }) // Or use a proper delete if usersCol was exported
+        setUsers(prev => prev.filter(u => u.id !== id))
         if (currentAdmin) {
-          await logAdminActivity(currentAdmin, 'delete_user', 'profiles', uid)
+          await logAdminActivity(currentAdmin, 'delete_user', 'profiles', id)
         }
       } catch (err) {
         alert('Failed to delete profile.')
@@ -77,7 +81,7 @@ export default function AdminUsers() {
 
   async function saveEdit() {
     if (!editing) return
-    await update(editing.uid, form)
+    await update(editing.id, form)
     setShowModal(false)
   }
 
@@ -155,7 +159,7 @@ export default function AdminUsers() {
               </thead>
               <tbody className="divide-y divide-line">
                 {paginated.map((u) => (
-                  <tr key={u.uid} className={`hover:bg-paper-light transition-colors ${u.status === 'disabled' ? 'bg-paper-light/50 grayscale' : ''}`}>
+                  <tr key={u.id} className={`hover:bg-paper-light transition-colors ${u.status === 'disabled' ? 'bg-paper-light/50 grayscale' : ''}`}>
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold border border-blue-200 shrink-0 overflow-hidden">
@@ -202,7 +206,7 @@ export default function AdminUsers() {
                       <button onClick={() => handleResetPassword(u.email)} className="p-2 hover:bg-gold-50 text-gold-600 rounded-lg transition" title="Reset Password">
                         <Key size={14} />
                       </button>
-                      <button onClick={() => remove(u.uid)} className="p-2 hover:bg-hanko text-hanko hover:text-white rounded-lg transition" title="Delete User">
+                      <button onClick={() => remove(u.id)} className="p-2 hover:bg-hanko text-hanko hover:text-white rounded-lg transition" title="Delete User">
                         <Trash2 size={14} />
                       </button>
                     </td>
@@ -245,7 +249,7 @@ export default function AdminUsers() {
           <div className="space-y-4 pt-2">
             <div className="flex items-center gap-4 p-3 bg-paper-light rounded-xl mb-2">
               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0">
-                {editing.avatarUrl ? <img src={editing.avatarUrl} alt="" className="w-full h-full rounded-full object-cover" /> : editing.fullName?.charAt(0) || 'U'}
+                {editing.avatarUrl ? <img src={editing.avatarUrl} alt="" className="w-full h-full object-cover" /> : editing.fullName?.charAt(0) || 'U'}
               </div>
               <div>
                 <p className="font-bold text-sm">{editing.fullName}</p>

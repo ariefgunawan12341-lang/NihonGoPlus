@@ -50,7 +50,7 @@ export function PaymentModal({
     try {
       await premiumOrderCollection.create({
         id: `order-${crypto.randomUUID()}`,
-        userUid: user.uid,
+        userUid: user.id,
         userEmail: user.email,
         userName: user.fullName,
         packageId: pkg.id,

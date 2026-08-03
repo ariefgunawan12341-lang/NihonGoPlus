@@ -1,0 +1,71 @@
+mutation CreateDemoData @transaction {
+  user_insertMany(data: [
+    {
+      id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      email: "alice@example.com",
+      displayName: "Alice"
+    },
+    {
+      id: "f47ac10b-58cc-4372-a567-0e02b2c3d480",
+      email: "bob@example.com",
+      displayName: "Bob"
+    },
+    {
+      id: "f47ac10b-58cc-4372-a567-0e02b2c3d481",
+      email: "charlie@example.com",
+      displayName: "Charlie"
+    }
+  ])
+  decision_insertMany(data: [
+    {
+      id: "a1a1a1a1-b2b2-c3c3-d4d4-e5e5e5e5e5e5",
+      title: "Office Lunch Location",
+      creatorId: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      status: "OPEN"
+    },
+    {
+      id: "a2a2a2a2-b2b2-c3c3-d4d4-e5e5e5e5e5e6",
+      title: "Project Milestone Date",
+      creatorId: "f47ac10b-58cc-4372-a567-0e02b2c3d480",
+      status: "CLOSED"
+    }
+  ])
+  member_insertMany(data: [
+    {
+      decisionId: "a1a1a1a1-b2b2-c3c3-d4d4-e5e5e5e5e5e5",
+      userId: "f47ac10b-58cc-4372-a567-0e02b2c3d480",
+      role: "Member"
+    },
+    {
+      decisionId: "a1a1a1a1-b2b2-c3c3-d4d4-e5e5e5e5e5e5",
+      userId: "f47ac10b-58cc-4372-a567-0e02b2c3d481",
+      role: "Observer"
+    }
+  ])
+  option_insertMany(data: [
+    {
+      id: "b1b1b1b1-c2c2-d3d3-e4e4-f5f5f5f5f5f5",
+      decisionId: "a1a1a1a1-b2b2-c3c3-d4d4-e5e5e5e5e5e5",
+      title: "Pizza Place",
+      authorId: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+    },
+    {
+      id: "b2b2b2b2-c2c2-d3d3-e4e4-f5f5f5f5f5f6",
+      decisionId: "a1a1a1a1-b2b2-c3c3-d4d4-e5e5e5e5e5e5",
+      title: "Sushi Bar",
+      authorId: "f47ac10b-58cc-4372-a567-0e02b2c3d480"
+    }
+  ])
+  vote_insertMany(data: [
+    {
+      optionId: "b1b1b1b1-c2c2-d3d3-e4e4-f5f5f5f5f5f5",
+      userId: "f47ac10b-58cc-4372-a567-0e02b2c3d480",
+      value: "YES"
+    },
+    {
+      optionId: "b2b2b2b2-c2c2-d3d3-e4e4-f5f5f5f5f5f6",
+      userId: "f47ac10b-58cc-4372-a567-0e02b2c3d481",
+      value: "YES"
+    }
+  ])
+}

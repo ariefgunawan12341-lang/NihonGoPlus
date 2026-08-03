@@ -5,8 +5,7 @@ export type JLPTLevel = 'N5' | 'N4' | 'N3' | 'N2' | 'N1'
 export type UserRole = 'super_admin' | 'admin' | 'editor' | 'moderator' | 'user'
 
 export interface UserProfile {
-  id?: string
-  uid: string
+  id: string
   email: string
   username?: string
   fullName: string
@@ -34,7 +33,7 @@ export interface DownloadModule {
   title: string
   description: string
   level: JLPTLevel
-  fileUrl: string // Google Drive (or other) link, or a Supabase Storage URL
+  fileUrl: string // URL to file (e.g. Google Drive or Firebase Storage)
   premium: boolean // legacy flag, kept for back-compat; accessType is now the source of truth
   accessType?: AccessType
   order: number

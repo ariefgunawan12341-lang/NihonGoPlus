@@ -26,7 +26,7 @@ type TabKey = (typeof TABS)[number]['key']
 
 function ReadingOrListeningPractice({ level, category }: { level: JLPTLevel; category: 'dokkai' | 'choukai' }) {
   const { user } = useAuth()
-  const attemptCollection = useMemo(() => (user ? userExamAttemptCollection(user.uid) : null), [user])
+  const attemptCollection = useMemo(() => (user ? userExamAttemptCollection(user.id) : null), [user])
   const [questions, setQuestions] = useState<ExamQuestion[] | null>(null)
   const [started, setStarted] = useState(false)
 
@@ -80,7 +80,7 @@ function ReadingOrListeningPractice({ level, category }: { level: JLPTLevel; cat
 
 function ProgressTab({ level }: { level: JLPTLevel }) {
   const { user } = useAuth()
-  const attemptCollection = useMemo(() => (user ? userExamAttemptCollection(user.uid) : null), [user])
+  const attemptCollection = useMemo(() => (user ? userExamAttemptCollection(user.id) : null), [user])
   const [attempts, setAttempts] = useState<Awaited<ReturnType<NonNullable<typeof attemptCollection>['list']>> | null>(null)
 
   useEffect(() => {

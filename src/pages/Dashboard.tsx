@@ -21,7 +21,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (user) {
-      getOrCreateProgress(user.uid).then(setProgress)
+      getOrCreateProgress(user.id).then(setProgress)
       listAllUsersAdmin().then((all) => setTopUsers([...all].sort((a, b) => b.xp - a.xp).slice(0, 5)))
     }
   }, [user])
@@ -147,7 +147,7 @@ export default function Dashboard() {
             </div>
             <div className="card overflow-hidden divide-y divide-line">
               {topUsers.map((u, i) => (
-                <div key={u.uid} className={`p-3 flex items-center gap-3 ${u.uid === user.uid ? 'bg-blue-50/50' : ''}`}>
+                <div key={u.id} className={`p-3 flex items-center gap-3 ${u.id === user.id ? 'bg-blue-50/50' : ''}`}>
                   <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${i === 0 ? 'bg-yellow-400 text-white' : 'bg-line text-ink-soft'}`}>
                     {i + 1}
                   </span>

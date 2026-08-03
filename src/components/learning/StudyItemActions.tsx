@@ -19,8 +19,8 @@ export function StudyItemActions({ itemId, itemType, audioText }: Props) {
 
   useEffect(() => {
     if (!user) return
-    const bCol = userBookmarkCollection(user.uid)
-    const nCol = userNoteCollection(user.uid)
+    const bCol = userBookmarkCollection(user.id)
+    const nCol = userNoteCollection(user.id)
 
     // Fetch bookmark state
     bCol.list().then(list => {
@@ -40,7 +40,7 @@ export function StudyItemActions({ itemId, itemType, audioText }: Props) {
 
   async function toggleBookmark() {
     if (!user) return
-    const col = userBookmarkCollection(user.uid)
+    const col = userBookmarkCollection(user.id)
     if (bookmark) {
       await col.remove(bookmark.id)
       setBookmark(null)
@@ -58,7 +58,7 @@ export function StudyItemActions({ itemId, itemType, audioText }: Props) {
 
   async function saveNote() {
     if (!user) return
-    const col = userNoteCollection(user.uid)
+    const col = userNoteCollection(user.id)
     if (note) {
       await col.update(note.id, { note: noteText, updatedAt: Date.now() })
     } else {

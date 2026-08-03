@@ -19,7 +19,7 @@ const GRADES: { grade: SrsGrade; label: string; color: string }[] = [
 
 export default function Flashcards() {
   const { user, updateProfile } = useAuth()
-  const srsCollection = useMemo(() => (user ? userSrsCollection(user.uid) : null), [user])
+  const srsCollection = useMemo(() => (user ? userSrsCollection(user.id) : null), [user])
 
   const [level, setLevel] = useState<JLPTLevel>('N5')
   const [words, setWords] = useState<VocabWord[]>([])
@@ -63,7 +63,7 @@ export default function Flashcards() {
     setReviewed((r) => r + 1)
     setFlipped(false)
     setQueue((q) => q.slice(1))
-    if (user) logActivity(user.uid, 'flashcardsReviewed')
+    if (user) logActivity(user.id, 'flashcardsReviewed')
   }
 
   useEffect(() => {

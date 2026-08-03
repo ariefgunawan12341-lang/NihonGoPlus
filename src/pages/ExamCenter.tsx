@@ -21,7 +21,7 @@ const FREE_DAILY_EXAM_LIMIT = 3
 
 export default function ExamCenter({ level = 'N5' }: { level?: JLPTLevel }) {
   const { user } = useAuth()
-  const attemptCollection = useMemo(() => (user ? userExamAttemptCollection(user.uid) : null), [user])
+  const attemptCollection = useMemo(() => (user ? userExamAttemptCollection(user.id) : null), [user])
 
   const [counts, setCounts] = useState<Record<string, number>>({})
   const [loadingCounts, setLoadingCounts] = useState(true)
@@ -47,7 +47,7 @@ export default function ExamCenter({ level = 'N5' }: { level?: JLPTLevel }) {
 
   useEffect(() => {
     if (!user) return
-    getOrCreateProgress(user.uid).then((p) => setExamsToday(todaysActivity(p).examsCompleted))
+    getOrCreateProgress(user.id).then((p) => setExamsToday(todaysActivity(p).examsCompleted))
   }, [user, running])
 
   const dailyLimitReached = !user?.premium && examsToday >= FREE_DAILY_EXAM_LIMIT

@@ -1,0 +1,139 @@
+mutation CreateUser @auth(level: USER) {
+  user_insert(data: {
+    id_expr: "auth.uid",
+    email_expr: "auth.token.email",
+    displayName: "New User"
+  })
+}
+
+mutation UpdateUser @auth(level: USER) {
+  user_update(key: {id_expr: "auth.uid"}, data: {displayName: "Updated Name"})
+}
+
+mutation DeleteUser @auth(level: USER) {
+  user_delete(key: {id_expr: "auth.uid"})
+}
+
+query GetUser @auth(level: USER) {
+  user(key: {id_expr: "auth.uid"}) {
+    email displayName avatarUrl
+  }
+}
+
+query ListUsers @auth(level: PUBLIC, insecureReason: "Publicly visible user directory") {
+  users {
+    displayName avatarUrl
+  }
+}
+
+mutation CreateDecision @auth(level: USER) {
+  decision_insert(data: {
+    title: "New Decision",
+    status: "open",
+    creatorId_expr: "auth.uid"
+  })
+}
+
+mutation UpdateDecision @auth(level: USER) {
+  decision_update(key: {id: "00000000-0000-0000-0000-000000000000"}, data: {status: "closed"})
+}
+
+mutation DeleteDecision @auth(level: USER) {
+  decision_delete(key: {id: "00000000-0000-0000-0000-000000000000"})
+}
+
+query GetDecision @auth(level: PUBLIC, insecureReason: "Publicly viewable decision") {
+  decision(id: "00000000-0000-0000-0000-000000000000") {
+    title status description deadline
+  }
+}
+
+query ListDecisions @auth(level: PUBLIC, insecureReason: "Public list of all decisions") {
+  decisions {
+    title status
+  }
+}
+
+mutation CreateOption @auth(level: USER) {
+  option_insert(data: {
+    title: "Option 1",
+    decisionId: "00000000-0000-0000-0000-000000000000",
+    authorId_expr: "auth.uid"
+  })
+}
+
+mutation UpdateOption @auth(level: USER) {
+  option_update(key: {id: "00000000-0000-0000-0000-000000000000"}, data: {description: "Updated description"})
+}
+
+mutation DeleteOption @auth(level: USER) {
+  option_delete(key: {id: "00000000-0000-0000-0000-000000000000"})
+}
+
+query GetOption @auth(level: PUBLIC, insecureReason: "Publicly viewable option") {
+  option(id: "00000000-0000-0000-0000-000000000000") {
+    title description
+  }
+}
+
+query ListOptions @auth(level: PUBLIC, insecureReason: "Public list of options") {
+  options {
+    title
+  }
+}
+
+mutation CreateVote @auth(level: USER) {
+  vote_insert(data: {
+    value: "Yes",
+    optionId: "00000000-0000-0000-0000-000000000000",
+    userId_expr: "auth.uid"
+  })
+}
+
+mutation UpdateVote @auth(level: USER) {
+  vote_update(key: {id: "00000000-0000-0000-0000-000000000000"}, data: {value: "No"})
+}
+
+mutation DeleteVote @auth(level: USER) {
+  vote_delete(key: {id: "00000000-0000-0000-0000-000000000000"})
+}
+
+query GetVote @auth(level: USER) {
+  vote(id: "00000000-0000-0000-0000-000000000000") {
+    value comment
+  }
+}
+
+query ListVotes @auth(level: USER) {
+  votes(where: {userId: {eq_expr: "auth.uid"}}) {
+    value
+  }
+}
+
+mutation CreateMember @auth(level: USER) {
+  member_insert(data: {
+    role: "admin",
+    decisionId: "00000000-0000-0000-0000-000000000000",
+    userId_expr: "auth.uid"
+  })
+}
+
+mutation UpdateMember @auth(level: USER) {
+  member_update(key: {id: "00000000-0000-0000-0000-000000000000"}, data: {role: "member"})
+}
+
+mutation DeleteMember @auth(level: USER) {
+  member_delete(key: {id: "00000000-0000-0000-0000-000000000000"})
+}
+
+query GetMember @auth(level: USER) {
+  member(id: "00000000-0000-0000-0000-000000000000") {
+    role
+  }
+}
+
+query ListMembers @auth(level: PUBLIC, insecureReason: "Public membership status") {
+  members {
+    role
+  }
+}

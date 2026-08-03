@@ -25,10 +25,10 @@ export default function AdminNotifications() {
     setSending(true)
     setMsg(null)
     try {
-      const targets = targetType === 'all' ? users : users.filter(u => u.uid === selectedUser)
+      const targets = targetType === 'all' ? users : users.filter(u => u.id === selectedUser)
 
       const promises = targets.map(u => {
-        const col = userNotificationCollection(u.uid)
+        const col = userNotificationCollection(u.id)
         return col.create({
           id: crypto.randomUUID(),
           title,
@@ -84,7 +84,7 @@ export default function AdminNotifications() {
             >
               <option value="">-- Pilih User --</option>
               {users.map(u => (
-                <option key={u.uid} value={u.uid}>{u.fullName} ({u.email})</option>
+                <option key={u.id} value={u.id}>{u.fullName} ({u.email})</option>
               ))}
             </select>
           </div>

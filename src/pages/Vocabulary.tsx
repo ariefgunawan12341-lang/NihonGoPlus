@@ -26,7 +26,7 @@ export default function Vocabulary({ initialLevel }: { initialLevel?: JLPTLevel 
 
   async function handleWordClick(w: VocabWord) {
     if (!user) return
-    await logActivity(user.uid, 'quizzesCompleted', 0, {
+    await logActivity(user.id, 'quizzesCompleted', 0, {
       type: 'lesson',
       title: `Mempelajari: ${w.kanji || w.kana}`,
       xpGained: 2

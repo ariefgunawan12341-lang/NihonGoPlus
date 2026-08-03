@@ -23,7 +23,7 @@ export default function Profile() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (user) getOrCreateProgress(user.uid).then(setProgress)
+    if (user) getOrCreateProgress(user.id).then(setProgress)
   }, [user])
 
   if (!user) return null
@@ -52,7 +52,7 @@ export default function Profile() {
     setUploading(true)
     setPhotoError(null)
     try {
-      const url = await uploadProfilePhoto(user.uid, file)
+      const url = await uploadProfilePhoto(user.id, file)
       await updateProfile({ avatarUrl: url })
     } catch (err) {
       setPhotoError(err instanceof Error ? err.message : 'Could not upload photo.')

@@ -45,7 +45,7 @@ export function KanaQuiz({ chars, onExit }: { chars: KanaChar[]; onExit: () => v
         if (user) {
           const xpEarned = correctCount + (isCorrect ? 1 : 0)
           updateProfile(applyStudySession(user, xpEarned * 5))
-          logActivity(user.uid, 'quizzesCompleted')
+          logActivity(user.id, 'quizzesCompleted')
         }
       }
     }, 500)

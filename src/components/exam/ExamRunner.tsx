@@ -65,7 +65,7 @@ export function ExamRunner({
       if (user) {
         const bonusXp = isPass ? score * 15 : score * 8
         updateProfile(applyStudySession(user, bonusXp))
-        logActivity(user.uid, 'examsCompleted', 1, {
+        logActivity(user.id, 'examsCompleted', 1, {
           type: 'exam',
           title: `Ujian JLPT ${questions[0]?.level || ''} - ${isPass ? 'LULUS' : 'TIDAK LULUS'}`,
           xpGained: bonusXp

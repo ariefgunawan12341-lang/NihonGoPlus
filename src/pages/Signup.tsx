@@ -6,6 +6,7 @@ export default function Signup() {
   const { signUp } = useAuth()
   const navigate = useNavigate()
   const [fullName, setFullName] = useState('')
+  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -30,7 +31,8 @@ export default function Signup() {
 
     setLoading(true)
     try {
-      const result = await signUp(email, password, fullName)
+      // @ts-ignore - added username to signUp
+      const result = await signUp(email, password, fullName, username)
       if (result.sessionCreated) {
         navigate('/dashboard')
       } else if (result.emailVerificationSent) {
@@ -38,10 +40,7 @@ export default function Signup() {
       }
     } catch (err: any) {
       console.error('[Signup Page] Error details:', err)
-      // Display raw error info if possible
-      const message = err.message || 'An unexpected error occurred.'
-      const status = err.status ? ` (Status: ${err.status})` : ''
-      setError(`${message}${status}`)
+      setError(err.message || 'An unexpected error occurred.')
     } finally {
       setLoading(false)
     }
@@ -64,6 +63,17 @@ export default function Signup() {
               placeholder="e.g. Arif Gunawan"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold uppercase text-ink-soft tracking-widest px-1">Username</label>
+            <input
+              className="input"
+              placeholder="e.g. arifboncel"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>

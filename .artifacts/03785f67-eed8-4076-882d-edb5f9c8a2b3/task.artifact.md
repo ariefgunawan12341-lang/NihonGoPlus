@@ -1,6 +1,9 @@
-# Task List - Fix Database Schema
+# Task: Comment System Audit & Hardening
 
-- [x] Rewrite `schema.sql` to be fully consistent with `profiles` table
-- [x] Add missing `admin_activity_log` to `schema.sql`
-- [x] Fix `bootstrap_admin.sql` to reference `profiles`
-- [x] Verify SQL syntax for Supabase compatibility
+- [ ] Delete legacy files (`localAuth.ts`, `localCollection.ts`) [/]
+- [ ] Refactor `src/services/db.ts` to remove local mode [/]
+- [ ] Update `UserProfile` type in `src/types/index.ts` [/]
+- [ ] Update `src/contexts/AuthContext.tsx` to use `user.id` and remove local logic [/]
+- [ ] Update `supabase/schema.sql` for `comments` table [/]
+- [ ] Refactor `CommentSection.tsx` and `AdminComments.tsx` [/]
+- [ ] Run `npm run build` and verify [ ]

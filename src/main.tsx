@@ -5,10 +5,8 @@ import './index.css'
 import App from './App'
 import { AuthProvider } from './contexts/AuthContext'
 import { ToastProvider } from './contexts/ToastContext'
-import { seedLocalData } from './services/db'
 import { initTheme } from './utils/theme'
 
-seedLocalData()
 initTheme()
 
 createRoot(document.getElementById('root')!).render(
